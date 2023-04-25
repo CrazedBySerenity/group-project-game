@@ -1,17 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
-import {useEffect, useState} from 'react';
+import logo from "./logo.svg";
+import "./App.css";
+import { useEffect, useState } from "react";
 
 function App() {
-
   const [playerPos, setplayerPos] = useState(250);
-  const [playerSpeed, setPlayerSpeed] = useState(10);
+  const [playerSpeed, setPlayerSpeed] = useState(5);
   const [tileOnePos, setTileOnePos] = useState(0);
   const [tileTwoPos, setTileTwoPos] = useState(2000);
   const [asteroidPos, setAsteroidPos] = useState(2000);
   const [asteroidTop, setAsteroidTop] = useState(150);
 
-  const [hitEffect, setHitEffect] = useState('blue');
+  const [hitEffect, setHitEffect] = useState("blue");
 
   const validUpKeyCodes = [38, 87];
   const validDownKeyCodes = [40, 83];
@@ -25,10 +24,10 @@ function App() {
   const bgScrollSpeed = 5;
 
   const gameAreaStyle = {
-    backgroundColor: 'black',
+    backgroundColor: "black",
     width: `${gameAreaSize}px`,
     height: `${gameAreaSize}px`,
-  }
+  };
 
   const playerStyle = {
     position: `absolute`,
@@ -55,19 +54,34 @@ function App() {
   };
 
   useEffect(() => {
-    const handleKeyDown = (e) =>{
+    let timeId;
+    timeId = setInterval(() => {
+      if (playerPos < 0) {
+        setplayerPos(0);
+      } else if (playerPos > gameAreaSize - playerSize) {
+        setplayerPos(gameAreaSize - playerSize);
+      }
+    }, 24);
+
+    return () => {
+      clearInterval(timeId);
+    };
+  }, [playerPos]);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
       console.log(e.keyCode);
 
-      if(validUpKeyCodes.includes(e.keyCode)){
-        setplayerPos(playerPos => playerPos - playerSpeed)
+      if (validUpKeyCodes.includes(e.keyCode)) {
+        setplayerPos((playerPos) => playerPos - playerSpeed);
       }
-      if(validDownKeyCodes.includes(e.keyCode)){
-        setplayerPos(playerPos => playerPos + playerSpeed)
+      if (validDownKeyCodes.includes(e.keyCode)) {
+        setplayerPos((playerPos) => playerPos + playerSpeed);
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown) 
-  }, [])
+    document.addEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     let timeId;
@@ -75,38 +89,42 @@ function App() {
       setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed);
       setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed);
 
-      if(tileOnePos < -2000){
+      if (tileOnePos < -2000) {
         setTileOnePos(2000);
       }
-      if(tileTwoPos < -2000){
+      if (tileTwoPos < -2000) {
         setTileTwoPos(2000);
       }
 
-      if(asteroidPos < playerOffset + playerSize && asteroidPos + asteroidSize > playerOffset && asteroidTop - asteroidSize < playerPos + playerSize && asteroidTop > playerPos - asteroidSize){
+      if (
+        asteroidPos < playerOffset + playerSize &&
+        asteroidPos + asteroidSize > playerOffset &&
+        asteroidTop - asteroidSize < playerPos + playerSize &&
+        asteroidTop > playerPos - asteroidSize
+      ) {
         console.log("hit");
-        setHitEffect('red');
+        setHitEffect("red");
+      } else {
+        setHitEffect("blue");
       }
-      else {
-        setHitEffect('blue');
-      }
-      
+
       setAsteroidPos((asteroidPos) => asteroidPos - asteroidSpeed);
 
-      if(asteroidPos < -2000){
+      if (asteroidPos < -2000) {
         setAsteroidPos(2000);
-        setAsteroidTop(Math.floor(Math.random() * (gameAreaSize - asteroidSize)));
-        if(asteroidTop < asteroidSize){
+        setAsteroidTop(
+          Math.floor(Math.random() * (gameAreaSize - asteroidSize))
+        );
+        if (asteroidTop < asteroidSize) {
           setAsteroidTop(asteroidSize);
         }
       }
-      
     }, 24);
 
-    return(() => {
+    return () => {
       clearInterval(timeId);
-    });
-  }, [tileOnePos, tileTwoPos])
-
+    };
+  }, [tileOnePos, tileTwoPos]);
 
   return (
     <div className="App">
@@ -115,12 +133,9 @@ function App() {
           <div style={tileOneStyle} className="background__tile"></div>
           <div style={tileTwoStyle} className="background__tile"></div>
         </div>
-        <div style={asteroidStyle} className="asteroid">
-
-        </div>
+        <div style={asteroidStyle} className="asteroid"></div>
         <div style={playerStyle} className="player"></div>
       </div>
-
     </div>
   );
 }
