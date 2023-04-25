@@ -27,6 +27,12 @@ code {
 
 }
 
+.asteroid {
+  position: absolute;
+  background-color: grey;
+  border-radius: 25%;
+}
+
 .background__tile {
   position: absolute;
   width: 2000px;

@@ -4,16 +4,24 @@ import {useEffect, useState} from 'react';
 
 function App() {
 
-  const [playerPosition, setPlayerPosition] = useState(250);
+  const [playerPos, setplayerPos] = useState(250);
   const [playerSpeed, setPlayerSpeed] = useState(10);
   const [tileOnePos, setTileOnePos] = useState(0);
   const [tileTwoPos, setTileTwoPos] = useState(2000);
+  const [asteroidPos, setAsteroidPos] = useState(2000);
+  const [asteroidTop, setAsteroidTop] = useState(150);
+
+  const [hitEffect, setHitEffect] = useState('blue');
 
   const validUpKeyCodes = [38, 87];
   const validDownKeyCodes = [40, 83];
 
   const playerSize = 40;
+  const playerOffset = 30;
   const gameAreaSize = 500;
+  const asteroidSize = 50;
+
+  const asteroidSpeed = 20;
   const bgScrollSpeed = 5;
 
   const gameAreaStyle = {
@@ -24,10 +32,18 @@ function App() {
 
   const playerStyle = {
     position: `absolute`,
-    backgroundColor: 'red',
+    backgroundColor: `${hitEffect}`,
     width: `${playerSize}px`,
     height: `${playerSize}px`,
-    top: `${playerPosition}px`,
+    top: `${playerPos}px`,
+    left: `${playerOffset}px`,
+  };
+
+  const asteroidStyle = {
+    left: `${asteroidPos}px`,
+    width: `${asteroidSize}px`,
+    height: `${asteroidSize}px`,
+    top: `${asteroidTop}px`,
   };
 
   const tileOneStyle = {
@@ -43,10 +59,10 @@ function App() {
       console.log(e.keyCode);
 
       if(validUpKeyCodes.includes(e.keyCode)){
-        setPlayerPosition(playerPosition => playerPosition - playerSpeed)
+        setplayerPos(playerPos => playerPos - playerSpeed)
       }
       if(validDownKeyCodes.includes(e.keyCode)){
-        setPlayerPosition(playerPosition => playerPosition + playerSpeed)
+        setplayerPos(playerPos => playerPos + playerSpeed)
       }
     }
 
@@ -65,6 +81,24 @@ function App() {
       if(tileTwoPos < -2000){
         setTileTwoPos(2000);
       }
+
+      if(asteroidPos < playerOffset + playerSize && asteroidPos + asteroidSize > playerOffset && asteroidTop - asteroidSize < playerPos + playerSize && asteroidTop > playerPos - asteroidSize){
+        console.log("hit");
+        setHitEffect('red');
+      }
+      else {
+        setHitEffect('blue');
+      }
+      
+      setAsteroidPos((asteroidPos) => asteroidPos - asteroidSpeed);
+
+      if(asteroidPos < -2000){
+        setAsteroidPos(2000);
+        setAsteroidTop(Math.floor(Math.random() * (gameAreaSize - asteroidSize)));
+        if(asteroidTop < asteroidSize){
+          setAsteroidTop(asteroidSize);
+        }
+      }
       
     }, 24);
 
@@ -81,8 +115,8 @@ function App() {
           <div style={tileOneStyle} className="background__tile"></div>
           <div style={tileTwoStyle} className="background__tile"></div>
         </div>
-        <div>
-          
+        <div style={asteroidStyle} className="asteroid">
+
         </div>
         <div style={playerStyle} className="player"></div>
       </div>
