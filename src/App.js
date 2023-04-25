@@ -54,21 +54,6 @@ function App() {
   };
 
   useEffect(() => {
-    let timeId;
-    timeId = setInterval(() => {
-      if (playerPos < 0) {
-        setplayerPos(0);
-      } else if (playerPos > gameAreaSize - playerSize) {
-        setplayerPos(gameAreaSize - playerSize);
-      }
-    }, 24);
-
-    return () => {
-      clearInterval(timeId);
-    };
-  }, [playerPos]);
-
-  useEffect(() => {
     const handleKeyDown = (e) => {
       console.log(e.keyCode);
 
@@ -94,6 +79,11 @@ function App() {
       }
       if (tileTwoPos < -2000) {
         setTileTwoPos(2000);
+      }
+      if (playerPos < 0) {
+        setplayerPos(0);
+      } else if (playerPos > gameAreaSize - playerSize) {
+        setplayerPos(gameAreaSize - playerSize);
       }
 
       if (
