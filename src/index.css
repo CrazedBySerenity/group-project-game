@@ -5,9 +5,33 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* display: flex;
+  flex-direction: column;
+  align-items: center;
+ */
+  background-color: black;
+  overflow: hidden;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.game-area {
+  /* overflow: hidden; */
+}
+
+.background__container {
+
+}
+
+.background__tile {
+  position: absolute;
+  width: 2000px;
+  height: 500px;
+
+  overflow: hidden;
+  background-image: url("./images/tiled-space-bg-3.png");
 }
