@@ -5,11 +5,14 @@ import {useEffect, useState} from 'react';
 function App() {
 
   const [playerPos, setplayerPos] = useState(250);
-  const [playerSpeed, setPlayerSpeed] = useState(10);
+  const [playerSpeed, setPlayerSpeed] = useState(30);
   const [tileOnePos, setTileOnePos] = useState(0);
   const [tileTwoPos, setTileTwoPos] = useState(2000);
   const [asteroidPos, setAsteroidPos] = useState(2000);
   const [asteroidTop, setAsteroidTop] = useState(150);
+
+  const [downIsPressed, setDownIsPressed] = useState(false);
+  const [upIsPressed, setUpIsPressed] = useState(false);
 
   const [hitEffect, setHitEffect] = useState('blue');
 
@@ -37,6 +40,7 @@ function App() {
     height: `${playerSize}px`,
     top: `${playerPos}px`,
     left: `${playerOffset}px`,
+    transition: `top, ${playerSpeed / 200}s`,
   };
 
   const asteroidStyle = {
@@ -59,15 +63,59 @@ function App() {
       console.log(e.keyCode);
 
       if(validUpKeyCodes.includes(e.keyCode)){
-        setplayerPos(playerPos => playerPos - playerSpeed)
+        setUpIsPressed(true);
       }
       if(validDownKeyCodes.includes(e.keyCode)){
-        setplayerPos(playerPos => playerPos + playerSpeed)
+        setDownIsPressed(true);
       }
-    }
+    };
 
-    document.addEventListener('keydown', handleKeyDown) 
-  }, [])
+    const handleKeyUp = (e) =>{
+      console.log(e.keyCode);
+
+      if(validUpKeyCodes.includes(e.keyCode)){
+        setUpIsPressed(false);
+      }
+      if(validDownKeyCodes.includes(e.keyCode)){
+        setDownIsPressed(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown); 
+    document.addEventListener('keyup', handleKeyUp); 
+
+    return(() => {
+      document.removeEventListener('keydown', handleKeyDown); 
+      document.removeEventListener('keyup', handleKeyUp); 
+    })
+  })
+
+  useEffect(() => {
+    let timeId;
+    timeId = setInterval(() => {
+
+      if (!(playerPos < 0)) {
+
+        if(!downIsPressed && upIsPressed){
+          setplayerPos(playerPos => playerPos - playerSpeed)
+        }
+
+      }
+
+      if (!(playerPos > gameAreaSize - playerSize)){
+
+        if(downIsPressed && !upIsPressed){
+          setplayerPos(playerPos => playerPos + playerSpeed)
+        }
+        
+      }
+    }, 24);
+
+    return(() => {
+      clearInterval(timeId);
+    });
+
+  }, [downIsPressed, upIsPressed, playerPos, playerSpeed])
 
   useEffect(() => {
     let timeId;
@@ -105,7 +153,7 @@ function App() {
     return(() => {
       clearInterval(timeId);
     });
-  }, [tileOnePos, tileTwoPos])
+  }, [tileOnePos, tileTwoPos, asteroidPos, asteroidTop, playerPos])
 
 
   return (
