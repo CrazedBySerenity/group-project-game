@@ -39,5 +39,13 @@ code {
   height: 500px;
 
   overflow: hidden;
-  background-image: url("./images/tiled-space-bg-3.png");
+  background-image: url("./images/tiled-space-bg-stars.png");
+}
+
+.background__tile--parallax {
+  background-image: url("./images/tiled-space-bg-planets-2.png");
+}
+
+.background__tile--parallax-2 {
+  background-image: url("./images/tiled-space-bg-planets.png");
 }

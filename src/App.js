@@ -8,6 +8,8 @@ function App() {
   const [playerSpeed, setPlayerSpeed] = useState(30);
   const [tileOnePos, setTileOnePos] = useState(0);
   const [tileTwoPos, setTileTwoPos] = useState(2000);
+  const [tileThreePos, setTileThreePos] = useState(0);
+  const [tileFourPos, setTileFourPos] = useState(2000);
   const [asteroidPos, setAsteroidPos] = useState(2000);
   const [asteroidTop, setAsteroidTop] = useState(150);
 
@@ -25,7 +27,8 @@ function App() {
   const asteroidSize = 50;
 
   const asteroidSpeed = 20;
-  const bgScrollSpeed = 5;
+  const bgScrollSpeed = 10;
+  const bgParallaxSpeed = 12;
 
   const gameAreaStyle = {
     backgroundColor: 'black',
@@ -56,6 +59,14 @@ function App() {
 
   const tileTwoStyle = {
     left: `${tileTwoPos}px`,
+  };
+
+  const tileThreeStyle = {
+    left: `${tileThreePos}px`,
+  };
+
+  const tileFourStyle = {
+    left: `${tileFourPos}px`,
   };
 
   useEffect(() => {
@@ -122,12 +133,20 @@ function App() {
     timeId = setInterval(() => {
       setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed);
       setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed);
+      setTileThreePos((tileThreePos) => tileThreePos - bgParallaxSpeed);
+      setTileFourPos((tileFourPos) => tileFourPos - bgParallaxSpeed);
 
       if(tileOnePos < -2000){
         setTileOnePos(2000);
       }
       if(tileTwoPos < -2000){
         setTileTwoPos(2000);
+      }
+      if(tileThreePos < -2000){
+        setTileThreePos(2000);
+      }
+      if(tileFourPos < -2000){
+        setTileFourPos(2000);
       }
 
       if(asteroidPos < playerOffset + playerSize && asteroidPos + asteroidSize > playerOffset && asteroidTop - asteroidSize < playerPos + playerSize && asteroidTop > playerPos - asteroidSize){
@@ -162,6 +181,8 @@ function App() {
         <div className="background__container">
           <div style={tileOneStyle} className="background__tile"></div>
           <div style={tileTwoStyle} className="background__tile"></div>
+          <div style={tileThreeStyle} className="background__tile background__tile--parallax"></div>
+          <div style={tileFourStyle} className="background__tile background__tile--parallax-2"></div>
         </div>
         <div style={asteroidStyle} className="asteroid">
 
