@@ -1,8 +1,8 @@
-const Shot = ({ pos, top, size }) => {
+const Shot = ({ pos, top, height, width }) => {
   let shotStyle = {
     left: `${pos}px`,
-    width: `${size}px`,
-    height: `${size}px`,
+    width: `${width}px`,
+    height: `${height}px`,
     top: `${top}px`,
   };
 

@@ -89,7 +89,13 @@ function App() {
 
   function renderShots() {
     let visibleShots = currentShots.map((shot) => (
-      <Shot key={shot.id} pos={shot.pos} top={shot.top} size={25} />
+      <Shot
+        key={shot.id}
+        pos={shot.pos}
+        top={shot.top}
+        width={shot.width}
+        height={shot.height}
+      />
     ));
     return visibleShots;
   }
@@ -103,7 +109,7 @@ function App() {
         console.log("shot fired");
         setCurrentShots([
           ...currentShots,
-          { pos: 70, top: newShotTop, id: uuidv4() },
+          { pos: 70, top: newShotTop, id: uuidv4(), width: 40, height: 10 },
         ]);
       }
     }
@@ -135,6 +141,25 @@ function App() {
             id: uuidv4(),
           },
         ]);
+      }
+    }
+  }
+
+  function detectShotCollision(currentAsteroids, currentShots) {
+    for (let i = 0; i < currentShots.length; i++) {
+      const shot = currentShots[i];
+
+      for (let j = 0; j < currentAsteroids.length; j++) {
+        const asteroid = currentAsteroids[j];
+
+        if (
+          shot.top <= asteroid.top + asteroid.size &&
+          shot.top + shot.height >= asteroid.top &&
+          shot.pos <= asteroid.pos + asteroid.size &&
+          shot.pos + shot.width >= asteroid.pos
+        ) {
+          console.log("hit");
+        }
       }
     }
   }
@@ -222,6 +247,7 @@ function App() {
     let timeId;
     timeId = setInterval(() => {
       addAsteroid();
+      detectShotCollision(currentAsteroids, currentShots);
       setShotCooldown((shotCooldown) => shotCooldown - 1);
       setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed);
       setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed);
@@ -233,8 +259,8 @@ function App() {
         setTileTwoPos(2000);
       }
 
-      console.log(Array.isArray(currentAsteroids));
-      console.log(currentAsteroids.length);
+      // console.log(Array.isArray(currentAsteroids));
+      // console.log(currentAsteroids.length);
 
       let hit = false;
 
@@ -259,8 +285,8 @@ function App() {
           asteroid.top - asteroidSize < playerPos + playerSize &&
           asteroid.top > playerPos - asteroidSize
         ) {
-          hit = true;
-          console.log("hit");
+          // hit = true;
+          // console.log("hit");
         }
 
         return asteroid;
@@ -283,6 +309,7 @@ function App() {
     asteroidTop,
     playerPos,
     currentAsteroids,
+    currentShots,
   ]);
 
   return (
