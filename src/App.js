@@ -1,6 +1,8 @@
-import logo from './logo.svg';
 import './App.css';
 import {useEffect, useState} from 'react';
+import {v4 as uuidv4} from "uuid";
+
+import Asteroid from './Asteroid';
 
 function App() {
 
@@ -10,11 +12,20 @@ function App() {
   const [tileTwoPos, setTileTwoPos] = useState(2000);
   const [asteroidPos, setAsteroidPos] = useState(2000);
   const [asteroidTop, setAsteroidTop] = useState(150);
+  const [currentAsteroids, setCurrentAsteroids] = useState([]);
+  const [asteroidTimer, setAsteroidTimer] = useState(0);
 
   const [downIsPressed, setDownIsPressed] = useState(false);
   const [upIsPressed, setUpIsPressed] = useState(false);
 
   const [hitEffect, setHitEffect] = useState('blue');
+
+  const asteroidSpawnTimer = {
+    min: 1,
+    max: 3
+  }
+
+  const maxAsteroids = 10;
 
   const validUpKeyCodes = [38, 87];
   const validDownKeyCodes = [40, 83];
@@ -43,12 +54,7 @@ function App() {
     transition: `top, ${playerSpeed / 200}s`,
   };
 
-  const asteroidStyle = {
-    left: `${asteroidPos}px`,
-    width: `${asteroidSize}px`,
-    height: `${asteroidSize}px`,
-    top: `${asteroidTop}px`,
-  };
+
 
   const tileOneStyle = {
     left: `${tileOnePos}px`,
@@ -57,6 +63,50 @@ function App() {
   const tileTwoStyle = {
     left: `${tileTwoPos}px`,
   };
+
+  const AsteroidRenderer = () => {
+    return(
+      <>
+        {renderAsteroids()}
+      </>
+    )
+  }
+
+  function renderAsteroids() {
+
+  let visibleAsteroids = currentAsteroids.map((asteroid) => (
+    <Asteroid key={asteroid.id} pos={asteroid.pos} top={asteroid.top} size={asteroidSize}/>
+  ))
+
+    return(visibleAsteroids);
+
+  }
+
+  function addAsteroid() {
+
+    let now = new Date().getTime();
+    //Check timer and set timer
+    if (asteroidTimer < now){
+      let newTimer = now + ((Math.random(asteroidSpawnTimer.max - asteroidSpawnTimer.min) + asteroidSpawnTimer.min) * 1000)
+      setAsteroidTimer(newTimer);
+      if(currentAsteroids.length < maxAsteroids){
+        let newAsteroidTop = (Math.floor(Math.random() * (gameAreaSize - asteroidSize)));
+        if(newAsteroidTop < asteroidSize){
+          newAsteroidTop = asteroidSize;
+        }
+        
+        setCurrentAsteroids([...currentAsteroids, {
+          pos: 2000,
+          top: newAsteroidTop,
+          id: uuidv4(),
+        }]);
+      }
+    }
+  }
+
+  function removeAsteroid(id) {
+    setCurrentAsteroids(currentAsteroids.filter((asteroid) => asteroid.id !== id))
+  }
 
   useEffect(() => {
     const handleKeyDown = (e) =>{
@@ -90,6 +140,7 @@ function App() {
     })
   })
 
+  //PLAYER INPUT
   useEffect(() => {
     let timeId;
     timeId = setInterval(() => {
@@ -117,9 +168,12 @@ function App() {
 
   }, [downIsPressed, upIsPressed, playerPos, playerSpeed])
 
+  //MOVEMENT AND COLLISION
   useEffect(() => {
     let timeId;
     timeId = setInterval(() => {
+
+      addAsteroid();
       setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed);
       setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed);
 
@@ -130,22 +184,31 @@ function App() {
         setTileTwoPos(2000);
       }
 
-      if(asteroidPos < playerOffset + playerSize && asteroidPos + asteroidSize > playerOffset && asteroidTop - asteroidSize < playerPos + playerSize && asteroidTop > playerPos - asteroidSize){
-        console.log("hit");
+      console.log(Array.isArray(currentAsteroids));
+      console.log(currentAsteroids.length);
+
+      let hit = false;
+
+      currentAsteroids.map( function(asteroid){
+        asteroid.pos -= asteroidSpeed;
+
+        if(asteroid.pos < -200){
+          removeAsteroid(asteroid.id);
+        }
+
+        if(asteroid.pos < playerOffset + playerSize && asteroid.pos + asteroidSize > playerOffset && asteroid.top - asteroidSize < playerPos + playerSize && asteroid.top > playerPos - asteroidSize){
+          hit = true;
+          console.log("hit");
+        }
+
+      return(asteroid);
+      });
+
+      if(hit){
         setHitEffect('red');
       }
       else {
         setHitEffect('blue');
-      }
-      
-      setAsteroidPos((asteroidPos) => asteroidPos - asteroidSpeed);
-
-      if(asteroidPos < -2000){
-        setAsteroidPos(2000);
-        setAsteroidTop(Math.floor(Math.random() * (gameAreaSize - asteroidSize)));
-        if(asteroidTop < asteroidSize){
-          setAsteroidTop(asteroidSize);
-        }
       }
       
     }, 24);
@@ -153,7 +216,7 @@ function App() {
     return(() => {
       clearInterval(timeId);
     });
-  }, [tileOnePos, tileTwoPos, asteroidPos, asteroidTop, playerPos])
+  }, [tileOnePos, tileTwoPos, asteroidPos, asteroidTop, playerPos, currentAsteroids])
 
 
   return (
@@ -163,9 +226,7 @@ function App() {
           <div style={tileOneStyle} className="background__tile"></div>
           <div style={tileTwoStyle} className="background__tile"></div>
         </div>
-        <div style={asteroidStyle} className="asteroid">
-
-        </div>
+        <AsteroidRenderer />
         <div style={playerStyle} className="player"></div>
       </div>
 
