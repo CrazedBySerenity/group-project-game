@@ -42,6 +42,7 @@ function App() {
   const asteroidSpeed = 20;
   const bgScrollSpeed = 5;
   const shotSpeed = 25;
+  const shotCooldownTime = 10;
 
   const gameAreaStyle = {
     backgroundColor: "black",
@@ -98,7 +99,7 @@ function App() {
       let newShotTop = playerPos + playerSize / 2 + 5;
 
       if (currentShots.length < maxShots) {
-        setShotCooldown(20);
+        setShotCooldown(shotCooldownTime);
         console.log("shot fired");
         setCurrentShots([
           ...currentShots,
