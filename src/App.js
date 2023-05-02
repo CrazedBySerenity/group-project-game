@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
+import ScoreDisplay from "./ScoreDisplay";
 
 function App() {
   const [playerPos, setplayerPos] = useState(250);
@@ -23,6 +24,8 @@ function App() {
 
   const [hitEffect, setHitEffect] = useState("blue");
 
+  const [currentScore, setCurrentScore] = useState(0);
+
   const asteroidSpawnTimer = {
     min: 1,
     max: 3,
@@ -30,6 +33,7 @@ function App() {
 
   const maxAsteroids = 10;
   const maxShots = 10;
+  const baseAsteroidScore = 150;
 
   const validUpKeyCodes = [38, 87];
   const validDownKeyCodes = [40, 83];
@@ -149,6 +153,8 @@ function App() {
     setCurrentAsteroids(
       currentAsteroids.filter((asteroid) => asteroid.id !== id)
     );
+
+    setCurrentScore((currentScore) => currentScore + baseAsteroidScore);
   }
   function removeShot(id) {
     setCurrentShots(currentShots.filter((shot) => shot.id !== id));
@@ -312,6 +318,7 @@ function App() {
         </div>
         <AsteroidRenderer />
         <ShotRenderer />
+        <ScoreDisplay score={currentScore}/>
         <div style={playerStyle} className="player"></div>
       </div>
     </div>
