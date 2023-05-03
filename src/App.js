@@ -35,7 +35,7 @@ function App() {
   };
 
   const maxAsteroids = 10;
-  const maxShots = 10;
+  const maxShots = 20;
   const baseAsteroidScore = 150;
 
   const validUpKeyCodes = [38, 87];
@@ -46,9 +46,9 @@ function App() {
   const gameAreaSize = 500;
   const asteroidSize = 50;
 
-  const asteroidSpeed = 200;
+  const asteroidSpeed = 500;
   const bgScrollSpeed = 50;
-  const shotSpeed = 250;
+  const shotSpeed = 750;
   const shotCooldownTime = 10;
 
   const gameAreaStyle = {
@@ -162,10 +162,6 @@ function App() {
 
   function removeShot(id) {
     setCurrentShots(currentShots.filter((shot) => shot.id !== id));
-  }
-
-  function BackgroundMovement(){
-
   }
 
   useEffect(() => {

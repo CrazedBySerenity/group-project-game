@@ -67,4 +67,7 @@ code {
   position: absolute;
   background-color: red;
   border-radius: 25%;
+
+  transition: left, ease;
+  transition-duration: 10s;
 }
