@@ -35,6 +35,16 @@ code {
 } 
 */
 
+.game-over__container {
+  width: 100vw;
+
+  border: 2px, solid, black;
+}
+
+.game-over__text {
+  color: white;
+}
+
 .score__container {
   width: 100vw;
 
@@ -44,9 +54,6 @@ code {
 .score__text {
   color: white;
 }
-
-
-
 
 .background__tile {
   position: absolute;

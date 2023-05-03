@@ -5,7 +5,7 @@ import {now as d3Now, interval as d3Interval} from 'd3-timer';
 
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
-import ScoreDisplay from "./ScoreDisplay";
+import Overlay from "./Overlay";
 
 function App() {
   const [playerPos, setplayerPos] = useState(250);
@@ -18,6 +18,7 @@ function App() {
   const [asteroidTimer, setAsteroidTimer] = useState(0);
   const [currentShots, setCurrentShots] = useState([]);
   const [shotCooldown, setShotCooldown] = useState(0);
+  const [currentOverlay, setCurrentOverlay] = useState([]);
 
   const [downIsPressed, setDownIsPressed] = useState(false);
   const [upIsPressed, setUpIsPressed] = useState(false);
@@ -26,6 +27,7 @@ function App() {
   const [hitEffect, setHitEffect] = useState("blue");
 
   const [currentScore, setCurrentScore] = useState(0);
+  const [gameOver, setgameOver] = useState(false);
 
   const lastCall = useRef(0);
 
@@ -164,6 +166,11 @@ function App() {
     setCurrentShots(currentShots.filter((shot) => shot.id !== id));
   }
 
+  function LoseGame() {
+    console.log("Game Over");
+    setgameOver(true);
+  }
+  //COLLECTING PLAYER INPUT
   useEffect(() => {
     const handleKeyDown = (e) => {
       console.log(e.keyCode);
@@ -202,7 +209,7 @@ function App() {
     };
   });
 
-  //PLAYER INPUT
+  //MOVING PLAYER
   useEffect(() => {
     let interval;
     interval = d3Interval(() => {
@@ -261,7 +268,8 @@ function App() {
           asteroid.pos -= asteroidSpeed * deltaTime;
   
           if (asteroid.pos < -200) {
-            removeAsteroid(asteroid.id);
+            LoseGame();
+            //removeAsteroid(asteroid.id);
           }
   
           if (
@@ -270,8 +278,9 @@ function App() {
             asteroid.top - asteroidSize < playerPos &&
             asteroid.top > playerPos + playerSize
           ) {
-            hit = true;
-            console.log("hit");
+            LoseGame();
+            // hit = true;
+            // console.log("hit");
           }
           if(currentShots.length >= 1){
             currentShots.map((shot) => {
@@ -345,7 +354,8 @@ function App() {
         </div>
         <AsteroidRenderer />
         <ShotRenderer />
-        <ScoreDisplay score={currentScore}/>
+
+        <Overlay content={currentOverlay} gameOver={gameOver} score={currentScore}></Overlay>
         <div style={playerStyle} className="player"></div>
       </div>
     </div>
