@@ -1,6 +1,7 @@
 import "./App.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
+import {now as d3Now, interval as d3Interval} from 'd3-timer'; 
 
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
@@ -26,6 +27,8 @@ function App() {
 
   const [currentScore, setCurrentScore] = useState(0);
 
+  const lastCall = useRef(0);
+
   const asteroidSpawnTimer = {
     min: 1,
     max: 3,
@@ -43,9 +46,9 @@ function App() {
   const gameAreaSize = 500;
   const asteroidSize = 50;
 
-  const asteroidSpeed = 20;
-  const bgScrollSpeed = 5;
-  const shotSpeed = 25;
+  const asteroidSpeed = 200;
+  const bgScrollSpeed = 50;
+  const shotSpeed = 250;
   const shotCooldownTime = 10;
 
   const gameAreaStyle = {
@@ -156,8 +159,13 @@ function App() {
 
     setCurrentScore((currentScore) => currentScore + baseAsteroidScore);
   }
+
   function removeShot(id) {
     setCurrentShots(currentShots.filter((shot) => shot.id !== id));
+  }
+
+  function BackgroundMovement(){
+
   }
 
   useEffect(() => {
@@ -200,8 +208,8 @@ function App() {
 
   //PLAYER INPUT
   useEffect(() => {
-    let timeId;
-    timeId = setInterval(() => {
+    let interval;
+    interval = d3Interval(() => {
       if (!(playerPos < 0)) {
         if (!downIsPressed && upIsPressed) {
           setplayerPos((playerPos) => playerPos - playerSpeed);
@@ -215,10 +223,10 @@ function App() {
       }
 
       playerShoot();
-    }, 24);
+    }, 20);
 
     return () => {
-      clearInterval(timeId);
+      interval.stop();
     };
   }, [
     downIsPressed,
@@ -231,12 +239,18 @@ function App() {
 
   //MOVEMENT AND COLLISION
   useEffect(() => {
-    let timeId;
-    timeId = setInterval(() => {
+    let interval;
+    interval = d3Interval(() => {
+      let now = d3Now();
+      let deltaTime = (now - lastCall.current) / 1000;
+      console.log(deltaTime);
+      lastCall.current = now;
+      if(deltaTime > 200) deltaTime = 0.010;
+
       addAsteroid();
-      setShotCooldown((shotCooldown) => shotCooldown - 1);
-      setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed);
-      setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed);
+      setShotCooldown((shotCooldown) => shotCooldown - 1 * deltaTime * 1000);
+      setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed * deltaTime);
+      setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed * deltaTime);
 
       if (tileOnePos < -2000) {
         setTileOnePos(2000);
@@ -246,58 +260,75 @@ function App() {
       }
 
       let hit = false;
-
-      currentAsteroids.map(function (asteroid) {
-        asteroid.pos -= asteroidSpeed;
-
-        if (asteroid.pos < -200) {
-          removeAsteroid(asteroid.id);
-        }
-
-        if (
-          asteroid.pos < playerOffset + playerSize &&
-          asteroid.pos + asteroidSize > playerOffset &&
-          asteroid.top - asteroidSize < playerPos &&
-          asteroid.top > playerPos + playerSize
-        ) {
-          hit = true;
-          console.log("hit");
-        }
-
-        currentShots.map(function (shot) {
-          shot.pos += shotSpeed;
+      if(currentAsteroids.length >= 1){
+        currentAsteroids.map((asteroid) => {
+          asteroid.pos -= asteroidSpeed * deltaTime;
   
-          if (shot.pos > 2000) {
-            removeShot(shot.id);
+          if (asteroid.pos < -200) {
+            removeAsteroid(asteroid.id);
+          }
+  
+          if (
+            asteroid.pos < playerOffset + playerSize &&
+            asteroid.pos + asteroidSize > playerOffset &&
+            asteroid.top - asteroidSize < playerPos &&
+            asteroid.top > playerPos + playerSize
+          ) {
+            hit = true;
+            console.log("hit");
+          }
+          if(currentShots.length >= 1){
+            currentShots.map((shot) => {
+              shot.pos += shotSpeed * deltaTime;
+      
+              if (shot.pos > 2000) {
+                removeShot(shot.id);
+              }
+    
+              if (
+                asteroid.pos < shot.pos + shot.width &&
+                asteroid.pos + asteroidSize > shot.pos &&
+                asteroid.top <= shot.top + shot.height &&
+                asteroid.top + asteroidSize > shot.top
+              ) {
+                console.log("Hit asteroid");
+                removeAsteroid(asteroid.id);
+                removeShot(shot.id);
+              }
+    
+              return(shot);
+              
+            });
           }
 
-          if (
-            asteroid.pos < shot.pos + shot.width &&
-            asteroid.pos + asteroidSize > shot.pos &&
-            asteroid.top <= shot.top + shot.height &&
-            asteroid.top + asteroidSize > shot.top
-          ) {
-            console.log("Hit asteroid");
-            removeAsteroid(asteroid.id);
+          return (asteroid);
+        });
+      }
+
+      else if (currentShots.length >= 1){
+        currentShots.map((shot) => {
+          shot.pos += shotSpeed * deltaTime;
+  
+          if (shot.pos > 2000) {
             removeShot(shot.id);
           }
 
           return(shot);
           
         });
+      }
 
-        return asteroid;
-      });
+
 
       if (hit) {
         setHitEffect("red");
       } else {
         setHitEffect("blue");
       }
-    }, 24);
+    }, 5);
 
     return () => {
-      clearInterval(timeId);
+      interval.stop();
     };
   }, [
     tileOnePos,
