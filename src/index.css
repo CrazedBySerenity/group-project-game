@@ -6,7 +6,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* display: flex;
+  /* 
+  display: flex;
   flex-direction: column;
   align-items: center;
  */
@@ -19,17 +20,39 @@ code {
     monospace;
 }
 
-.game-area {
-  /* overflow: hidden; */
+.flex-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .game-area {
+  overflow: hidden;
 }
 
 .background__container {
+} 
+*/
+
+.game-over__container {
+  width: 100vw;
+
+  border: 2px, solid, black;
 }
 
-.asteroid {
-  position: absolute;
-  background-color: grey;
-  border-radius: 25%;
+.game-over__text {
+  color: white;
+}
+
+.score__container {
+  width: 100vw;
+
+  border: 2px, solid, black;
+}
+
+.score__text {
+  color: white;
 }
 
 .background__tile {
@@ -41,8 +64,17 @@ code {
   background-image: url("./images/tiled-space-bg-3.png");
 }
 
+.asteroid {
+  position: absolute;
+  background-color: grey;
+  border-radius: 25%;
+}
+
 .shot {
   position: absolute;
   background-color: red;
   border-radius: 25%;
+
+  transition: left, ease;
+  transition-duration: 10s;
 }
