@@ -11,7 +11,7 @@ const Overlay = (props) => {
                         <p className="game-over__text">Score:</p>
                         <p className="game-over__text">{props.score}</p>
                     </div>
-
+                    <p className="game-over__text">Press ENTER to play again...</p>
                 </div>
             </div>
         );
