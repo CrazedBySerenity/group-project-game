@@ -3,9 +3,10 @@ import scoresData from "../data/scores";
 
 const leaderBoardStyle = {
   backgroundColor: "black",
-  margin: "20px",
-  maxWidth: "250px",
+  margin: "40px",
+  maxWidth: "350px",
   width: "100%",
+  alignText,
 };
 
 const leaderBoardLine = {
