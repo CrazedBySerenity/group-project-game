@@ -9,7 +9,6 @@ import Overlay from "./Overlay";
 
 function App() {
   const [playerPos, setplayerPos] = useState(250);
-  const [playerSpeed, setPlayerSpeed] = useState(30);
   const [tileOnePos, setTileOnePos] = useState(0);
   const [tileTwoPos, setTileTwoPos] = useState(2000);
   const [asteroidPos, setAsteroidPos] = useState(2000);
@@ -48,10 +47,11 @@ function App() {
   const gameAreaSize = 500;
   const asteroidSize = 50;
 
-  const asteroidSpeed = 500;
+  const playerSpeed = 30;
+  const asteroidSpeed = 10;
   const bgScrollSpeed = 50;
-  const shotSpeed = 750;
-  const shotCooldownTime = 10;
+  const shotSpeed = 50;
+  const shotCooldownTime = 100;
 
   const gameAreaStyle = {
     backgroundColor: "black",
@@ -265,7 +265,7 @@ function App() {
       let hit = false;
       if(currentAsteroids.length >= 1){
         currentAsteroids.map((asteroid) => {
-          asteroid.pos -= asteroidSpeed * deltaTime;
+          asteroid.pos -= asteroidSpeed;
   
           if (asteroid.pos < -200) {
             LoseGame();
@@ -284,7 +284,7 @@ function App() {
           }
           if(currentShots.length >= 1){
             currentShots.map((shot) => {
-              shot.pos += shotSpeed * deltaTime;
+              shot.pos += shotSpeed;
       
               if (shot.pos > 2000) {
                 removeShot(shot.id);
@@ -293,8 +293,8 @@ function App() {
               if (
                 asteroid.pos < shot.pos + shot.width &&
                 asteroid.pos + asteroidSize > shot.pos &&
-                asteroid.top <= shot.top + shot.height &&
-                asteroid.top + asteroidSize > shot.top
+                asteroid.top <= shot.top + shot.height * 2 &&
+                asteroid.top + asteroidSize > shot.top - shot.height
               ) {
                 console.log("Hit asteroid");
                 removeAsteroid(asteroid.id);
@@ -312,7 +312,7 @@ function App() {
 
       else if (currentShots.length >= 1){
         currentShots.map((shot) => {
-          shot.pos += shotSpeed * deltaTime;
+          shot.pos += shotSpeed;
   
           if (shot.pos > 2000) {
             removeShot(shot.id);
