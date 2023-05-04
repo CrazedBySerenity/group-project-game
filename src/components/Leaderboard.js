@@ -6,7 +6,6 @@ const leaderBoardStyle = {
   margin: "40px",
   maxWidth: "350px",
   width: "100%",
-  alignText,
 };
 
 const leaderBoardLine = {
