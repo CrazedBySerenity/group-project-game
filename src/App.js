@@ -6,12 +6,21 @@ import {now as d3Now, interval as d3Interval} from 'd3-timer';
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
 import Overlay from "./Overlay";
+import useWindowDimensions from "./UseWindowDimensions";
 
 function App() {
+
+  let windowSize = useWindowDimensions();
+
+  const gameAreaSize = {
+    width: windowSize.width < 2000 ? windowSize.width : 2000,
+    height: windowSize.height < 500 ? windowSize.height : 500
+  };
+
   const [playerPos, setplayerPos] = useState(250);
   const [tileOnePos, setTileOnePos] = useState(0);
-  const [tileTwoPos, setTileTwoPos] = useState(2000);
-  const [asteroidPos, setAsteroidPos] = useState(2000);
+  const [tileTwoPos, setTileTwoPos] = useState(gameAreaSize.width);
+  const [asteroidPos, setAsteroidPos] = useState(gameAreaSize.width);
   const [asteroidTop, setAsteroidTop] = useState(150);
   const [currentAsteroids, setCurrentAsteroids] = useState([]);
   const [asteroidTimer, setAsteroidTimer] = useState(0);
@@ -41,10 +50,10 @@ function App() {
 
   const validUpKeyCodes = [38, 87];
   const validDownKeyCodes = [40, 83];
+  const validRestartKeyCodes = [13, 82];
 
   const playerSize = 40;
   const playerOffset = 30;
-  const gameAreaSize = 500;
   const asteroidSize = 50;
 
   const playerSpeed = 30;
@@ -55,8 +64,8 @@ function App() {
 
   const gameAreaStyle = {
     backgroundColor: "black",
-    width: `${gameAreaSize}px`,
-    height: `${gameAreaSize}px`,
+    width: `${gameAreaSize.width}px`,
+    height: `${gameAreaSize.height}px`,
   };
 
   const playerStyle = {
@@ -76,6 +85,11 @@ function App() {
   const tileTwoStyle = {
     left: `${tileTwoPos}px`,
   };
+
+  const backgroundContainerStyle = {
+    width: `${gameAreaSize.width}px`,
+    height: `${gameAreaSize.height}px`,
+  }
 
   const AsteroidRenderer = () => {
     return <>{renderAsteroids()}</>;
@@ -136,7 +150,7 @@ function App() {
       setAsteroidTimer(newTimer);
       if (currentAsteroids.length < maxAsteroids) {
         let newAsteroidTop = Math.floor(
-          Math.random() * (gameAreaSize - asteroidSize)
+          Math.random() * (gameAreaSize.height - asteroidSize)
         );
         if (newAsteroidTop < asteroidSize) {
           newAsteroidTop = asteroidSize;
@@ -145,7 +159,7 @@ function App() {
         setCurrentAsteroids([
           ...currentAsteroids,
           {
-            pos: 2000,
+            pos: gameAreaSize.width,
             top: newAsteroidTop,
             id: uuidv4(),
           },
@@ -168,6 +182,8 @@ function App() {
 
   function LoseGame() {
     console.log("Game Over");
+    setCurrentAsteroids([]);
+    setCurrentShots([]);
     setgameOver(true);
   }
   //COLLECTING PLAYER INPUT
@@ -188,6 +204,12 @@ function App() {
 
     const handleKeyUp = (e) => {
       console.log(e.keyCode);
+
+      if(gameOver && validRestartKeyCodes.includes(e.keyCode)){
+        setgameOver(false);
+        setCurrentScore(0);
+        //Do more stuff to restart the game
+      }
 
       if (validUpKeyCodes.includes(e.keyCode)) {
         setUpIsPressed(false);
@@ -211,6 +233,8 @@ function App() {
 
   //MOVING PLAYER
   useEffect(() => {
+    if(gameOver) return;
+
     let interval;
     interval = d3Interval(() => {
       if (!(playerPos < 0)) {
@@ -219,7 +243,7 @@ function App() {
         }
       }
 
-      if (!(playerPos > gameAreaSize - playerSize)) {
+      if (!(playerPos > gameAreaSize.height - playerSize)) {
         if (downIsPressed && !upIsPressed) {
           setplayerPos((playerPos) => playerPos + playerSpeed);
         }
@@ -244,6 +268,7 @@ function App() {
   useEffect(() => {
     let interval;
     interval = d3Interval(() => {
+      if(gameOver) return;
       let now = d3Now();
       let deltaTime = (now - lastCall.current) / 1000;
       console.log(deltaTime);
@@ -255,11 +280,11 @@ function App() {
       setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed * deltaTime);
       setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed * deltaTime);
 
-      if (tileOnePos < -2000) {
-        setTileOnePos(2000);
+      if (tileOnePos < -gameAreaSize.width) {
+        setTileOnePos(gameAreaSize.width);
       }
-      if (tileTwoPos < -2000) {
-        setTileTwoPos(2000);
+      if (tileTwoPos < -gameAreaSize.width) {
+        setTileTwoPos(gameAreaSize.width);
       }
 
       let hit = false;
@@ -286,7 +311,7 @@ function App() {
             currentShots.map((shot) => {
               shot.pos += shotSpeed;
       
-              if (shot.pos > 2000) {
+              if (shot.pos > gameAreaSize.width) {
                 removeShot(shot.id);
               }
     
@@ -314,7 +339,7 @@ function App() {
         currentShots.map((shot) => {
           shot.pos += shotSpeed;
   
-          if (shot.pos > 2000) {
+          if (shot.pos > gameAreaSize.width) {
             removeShot(shot.id);
           }
 
@@ -348,7 +373,7 @@ function App() {
   return (
     <div className="App">
       <div style={gameAreaStyle} className="game-area">
-        <div className="background__container">
+        <div style={backgroundContainerStyle} className="background__container">
           <div style={tileOneStyle} className="background__tile"></div>
           <div style={tileTwoStyle} className="background__tile"></div>
         </div>
