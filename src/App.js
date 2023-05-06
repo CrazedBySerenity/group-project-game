@@ -1,12 +1,14 @@
 import "./App.css";
 import { useEffect, useState, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
-import {now as d3Now, interval as d3Interval} from 'd3-timer'; 
+import { now as d3Now, interval as d3Interval } from "d3-timer";
 
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
 import Overlay from "./Overlay";
+
 import useWindowDimensions from "./UseWindowDimensions";
+import Leaderboard from "./components/Leaderboard";
 
 function App() {
 
@@ -273,7 +275,7 @@ function App() {
       let deltaTime = (now - lastCall.current) / 1000;
       console.log(deltaTime);
       lastCall.current = now;
-      if(deltaTime > 200) deltaTime = 0.010;
+      if (deltaTime > 200) deltaTime = 0.01;
 
       addAsteroid();
       setShotCooldown((shotCooldown) => shotCooldown - 1 * deltaTime * 1000);
@@ -288,15 +290,15 @@ function App() {
       }
 
       let hit = false;
-      if(currentAsteroids.length >= 1){
+      if (currentAsteroids.length >= 1) {
         currentAsteroids.map((asteroid) => {
           asteroid.pos -= asteroidSpeed;
-  
+
           if (asteroid.pos < -200) {
             LoseGame();
             //removeAsteroid(asteroid.id);
           }
-  
+
           if (
             asteroid.pos < playerOffset + playerSize &&
             asteroid.pos + asteroidSize > playerOffset &&
@@ -307,14 +309,14 @@ function App() {
             // hit = true;
             // console.log("hit");
           }
-          if(currentShots.length >= 1){
+          if (currentShots.length >= 1) {
             currentShots.map((shot) => {
               shot.pos += shotSpeed;
-      
+
               if (shot.pos > gameAreaSize.width) {
                 removeShot(shot.id);
               }
-    
+
               if (
                 asteroid.pos < shot.pos + shot.width &&
                 asteroid.pos + asteroidSize > shot.pos &&
@@ -325,30 +327,24 @@ function App() {
                 removeAsteroid(asteroid.id);
                 removeShot(shot.id);
               }
-    
-              return(shot);
-              
+
+              return shot;
             });
           }
 
-          return (asteroid);
+          return asteroid;
         });
-      }
-
-      else if (currentShots.length >= 1){
+      } else if (currentShots.length >= 1) {
         currentShots.map((shot) => {
           shot.pos += shotSpeed;
-  
+
           if (shot.pos > gameAreaSize.width) {
             removeShot(shot.id);
           }
 
-          return(shot);
-          
+          return shot;
         });
       }
-
-
 
       if (hit) {
         setHitEffect("red");
@@ -380,9 +376,14 @@ function App() {
         <AsteroidRenderer />
         <ShotRenderer />
 
-        <Overlay content={currentOverlay} gameOver={gameOver} score={currentScore}></Overlay>
+        <Overlay
+          content={currentOverlay}
+          gameOver={gameOver}
+          score={currentScore}
+        ></Overlay>
         <div style={playerStyle} className="player"></div>
       </div>
+      <Leaderboard />
     </div>
   );
 }
