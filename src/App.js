@@ -11,12 +11,11 @@ import useWindowDimensions from "./UseWindowDimensions";
 import Leaderboard from "./components/Leaderboard";
 
 function App() {
-
   let windowSize = useWindowDimensions();
 
   const gameAreaSize = {
     width: windowSize.width < 2000 ? windowSize.width : 2000,
-    height: windowSize.height < 500 ? windowSize.height : 500
+    height: windowSize.height < 500 ? windowSize.height : 500,
   };
 
   const [playerPos, setplayerPos] = useState(250);
@@ -38,6 +37,7 @@ function App() {
 
   const [currentScore, setCurrentScore] = useState(0);
   const [gameOver, setgameOver] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   const lastCall = useRef(0);
 
@@ -91,7 +91,7 @@ function App() {
   const backgroundContainerStyle = {
     width: `${gameAreaSize.width}px`,
     height: `${gameAreaSize.height}px`,
-  }
+  };
 
   const AsteroidRenderer = () => {
     return <>{renderAsteroids()}</>;
@@ -187,6 +187,7 @@ function App() {
     setCurrentAsteroids([]);
     setCurrentShots([]);
     setgameOver(true);
+    setGameStarted(false);
   }
   //COLLECTING PLAYER INPUT
   useEffect(() => {
@@ -195,9 +196,15 @@ function App() {
 
       if (validUpKeyCodes.includes(e.keyCode)) {
         setUpIsPressed(true);
+        if (!gameOver && !gameStarted) {
+          setGameStarted(true);
+        }
       }
       if (validDownKeyCodes.includes(e.keyCode)) {
         setDownIsPressed(true);
+        if (!gameOver && !gameStarted) {
+          setGameStarted(true);
+        }
       }
       if (e.keyCode === 32) {
         setSpaceIsPressed(true);
@@ -207,7 +214,7 @@ function App() {
     const handleKeyUp = (e) => {
       console.log(e.keyCode);
 
-      if(gameOver && validRestartKeyCodes.includes(e.keyCode)){
+      if (gameOver && validRestartKeyCodes.includes(e.keyCode)) {
         setgameOver(false);
         setCurrentScore(0);
         //Do more stuff to restart the game
@@ -235,8 +242,8 @@ function App() {
 
   //MOVING PLAYER
   useEffect(() => {
-    if(gameOver) return;
-
+    if (gameOver) return;
+    if (!gameStarted) return;
     let interval;
     interval = d3Interval(() => {
       if (!(playerPos < 0)) {
@@ -270,7 +277,8 @@ function App() {
   useEffect(() => {
     let interval;
     interval = d3Interval(() => {
-      if(gameOver) return;
+      if (gameOver) return;
+      if (!gameStarted) return;
       let now = d3Now();
       let deltaTime = (now - lastCall.current) / 1000;
       console.log(deltaTime);
@@ -380,10 +388,13 @@ function App() {
           content={currentOverlay}
           gameOver={gameOver}
           score={currentScore}
+          gameStarted={gameStarted}
+          gameAreaWidth={gameAreaSize.width}
+          gameAreaHeight={gameAreaSize.height}
         ></Overlay>
         <div style={playerStyle} className="player"></div>
       </div>
-      <Leaderboard />
+      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} />
     </div>
   );
 }
