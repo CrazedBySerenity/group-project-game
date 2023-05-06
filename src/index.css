@@ -107,7 +107,8 @@ code {
 }
 
 .player {
-  border-radius: 10% 50% 50% 10%;
+  background-image: url(images/Ship_5.png);
+  background-size: cover;
 }
 
 .asteroid {
