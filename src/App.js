@@ -7,6 +7,7 @@ import Asteroid from "./Asteroid";
 import Shot from "./Shot";
 import Overlay from "./Overlay";
 import Leaderboard from "./components/Leaderboard";
+import useWindowDimensions from "./UseWindowDimensions";
 
 function App() {
   const [playerPos, setplayerPos] = useState(250);
@@ -287,7 +288,7 @@ function App() {
             currentShots.map((shot) => {
               shot.pos += shotSpeed;
 
-              if (shot.pos > 2000) {
+              if (shot.pos > gameAreaSize.width) {
                 removeShot(shot.id);
               }
 
@@ -312,7 +313,7 @@ function App() {
         currentShots.map((shot) => {
           shot.pos += shotSpeed;
 
-          if (shot.pos > 2000) {
+          if (shot.pos > gameAreaSize.width) {
             removeShot(shot.id);
           }
 
