@@ -5,7 +5,7 @@ const leaderBoardStyle = {
   backgroundColor: "black",
   margin: "40px",
   maxWidth: "350px",
-  width: "100%",
+  //   width: "100%",
 };
 
 const leaderBoardLine = {
@@ -13,7 +13,7 @@ const leaderBoardLine = {
   width: "5px",
 };
 
-const Leaderboard = () => {
+const Leaderboard = ({ gameSize }) => {
   const [score, setScore] = useState(scoresData);
 
   useEffect(() => {
@@ -26,17 +26,23 @@ const Leaderboard = () => {
   }, []);
 
   return (
-    <div className="leaderboard__container">
-      <div style={leaderBoardStyle}>
-        {score.map((item) => (
-          <div key={item.id}>{item.name}</div>
-        ))}
-      </div>
-      <div style={leaderBoardLine}></div>
-      <div style={leaderBoardStyle}>
-        {score.map((item) => (
-          <div key={item.id}>{item.score}</div>
-        ))}
+    <div
+      className="leaderboard__container"
+      style={{ width: gameSize.width + "px" }}
+    >
+      <div className="leaderboard__scroreContainer">Current score:</div>
+      <div className="leaderboard__subcontainer">
+        <div style={leaderBoardStyle}>
+          {score.map((item) => (
+            <div key={item.id}>{item.name}</div>
+          ))}
+        </div>
+        <div style={leaderBoardLine}></div>
+        <div style={leaderBoardStyle}>
+          {score.map((item) => (
+            <div key={item.id}>{item.score}</div>
+          ))}
+        </div>
       </div>
     </div>
   );

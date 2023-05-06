@@ -57,13 +57,11 @@ code {
   border-color: rgb(201, 8, 201);
   border-width: 10px;
   border-radius: 8px;
-  
-  background-color: black;
 
+  background-color: black;
 }
 
 .game-over__text {
-
   font-size: 32px;
 
   color: white;
@@ -88,7 +86,6 @@ code {
   background-image: url("./images/tiled-space-bg-3.png");
 }
 
-
 .player {
   border-radius: 10% 50% 50% 10%;
 }
@@ -111,10 +108,26 @@ code {
   background-color: black;
   color: #fff;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   font-size: 48px;
-  margin: auto;
+  /* margin: auto; */
   border: 5px solid white;
   font-family: "Press Start 2P";
   text-align: left;
+}
+.leaderboard__subcontainer {
+  background-color: black;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+
+  /* margin: auto; */
+
+  text-align: left;
+}
+.leaderboard__scroreContainer {
+  border-bottom: 5px solid white;
+  text-align: center;
+  padding: 20px;
 }

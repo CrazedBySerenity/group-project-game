@@ -11,12 +11,11 @@ import useWindowDimensions from "./UseWindowDimensions";
 import Leaderboard from "./components/Leaderboard";
 
 function App() {
-
   let windowSize = useWindowDimensions();
 
   const gameAreaSize = {
     width: windowSize.width < 2000 ? windowSize.width : 2000,
-    height: windowSize.height < 500 ? windowSize.height : 500
+    height: windowSize.height < 500 ? windowSize.height : 500,
   };
 
   const [playerPos, setplayerPos] = useState(250);
@@ -91,7 +90,7 @@ function App() {
   const backgroundContainerStyle = {
     width: `${gameAreaSize.width}px`,
     height: `${gameAreaSize.height}px`,
-  }
+  };
 
   const AsteroidRenderer = () => {
     return <>{renderAsteroids()}</>;
@@ -207,7 +206,7 @@ function App() {
     const handleKeyUp = (e) => {
       console.log(e.keyCode);
 
-      if(gameOver && validRestartKeyCodes.includes(e.keyCode)){
+      if (gameOver && validRestartKeyCodes.includes(e.keyCode)) {
         setgameOver(false);
         setCurrentScore(0);
         //Do more stuff to restart the game
@@ -235,7 +234,7 @@ function App() {
 
   //MOVING PLAYER
   useEffect(() => {
-    if(gameOver) return;
+    if (gameOver) return;
 
     let interval;
     interval = d3Interval(() => {
@@ -270,7 +269,7 @@ function App() {
   useEffect(() => {
     let interval;
     interval = d3Interval(() => {
-      if(gameOver) return;
+      if (gameOver) return;
       let now = d3Now();
       let deltaTime = (now - lastCall.current) / 1000;
       console.log(deltaTime);
@@ -383,7 +382,7 @@ function App() {
         ></Overlay>
         <div style={playerStyle} className="player"></div>
       </div>
-      <Leaderboard />
+      <Leaderboard gameSize={gameAreaSize} />
     </div>
   );
 }
