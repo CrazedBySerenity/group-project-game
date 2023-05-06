@@ -33,6 +33,7 @@ const Leaderboard = ({ gameSize, currentScore }) => {
       <div className="leaderboard__scroreContainer">
         Current score: {currentScore}
       </div>
+      {/* <div className="leaderboard__scroreContainer">Highscores</div> */}
       <div className="leaderboard__subcontainer">
         <div style={leaderBoardStyle}>
           {score.map((item) => (

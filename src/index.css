@@ -32,6 +32,9 @@ code {
 .wh-100 {
   width: 100%;
   height: 100%;
+  background-color: rgba(1, 1, 1, 0.87);
+  position: relative;
+  z-index: 2;
 }
 
 .game-area {
@@ -53,12 +56,29 @@ code {
   max-width: 400px;
   max-height: 350px;
 
-  border-style: solid;
-  border-color: rgb(201, 8, 201);
-  border-width: 10px;
-  border-radius: 8px;
+  border: 5px solid white;
 
   background-color: black;
+  font-family: "Press Start 2P";
+  padding: 20px;
+}
+
+.game-start__container {
+  position: absolute;
+
+  font-size: 24px;
+
+  width: 100%;
+  height: 100%;
+
+  max-width: 1000px;
+  max-height: 350px;
+
+  border: 5px solid white;
+
+  background-color: black;
+  font-family: "Press Start 2P";
+  padding: 20px;
 }
 
 .game-over__text {
@@ -105,6 +125,7 @@ code {
   transition-duration: 10s;
 }
 .leaderboard__container {
+  user-select: none;
   background-color: black;
   color: #fff;
   display: flex;

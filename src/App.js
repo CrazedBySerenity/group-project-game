@@ -37,6 +37,7 @@ function App() {
 
   const [currentScore, setCurrentScore] = useState(0);
   const [gameOver, setgameOver] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   const lastCall = useRef(0);
 
@@ -186,6 +187,7 @@ function App() {
     setCurrentAsteroids([]);
     setCurrentShots([]);
     setgameOver(true);
+    setGameStarted(false);
   }
   //COLLECTING PLAYER INPUT
   useEffect(() => {
@@ -194,9 +196,15 @@ function App() {
 
       if (validUpKeyCodes.includes(e.keyCode)) {
         setUpIsPressed(true);
+        if (!gameOver && !gameStarted) {
+          setGameStarted(true);
+        }
       }
       if (validDownKeyCodes.includes(e.keyCode)) {
         setDownIsPressed(true);
+        if (!gameOver && !gameStarted) {
+          setGameStarted(true);
+        }
       }
       if (e.keyCode === 32) {
         setSpaceIsPressed(true);
@@ -235,7 +243,7 @@ function App() {
   //MOVING PLAYER
   useEffect(() => {
     if (gameOver) return;
-
+    if (!gameStarted) return;
     let interval;
     interval = d3Interval(() => {
       if (!(playerPos < 0)) {
@@ -270,6 +278,7 @@ function App() {
     let interval;
     interval = d3Interval(() => {
       if (gameOver) return;
+      if (!gameStarted) return;
       let now = d3Now();
       let deltaTime = (now - lastCall.current) / 1000;
       console.log(deltaTime);
@@ -379,6 +388,9 @@ function App() {
           content={currentOverlay}
           gameOver={gameOver}
           score={currentScore}
+          gameStarted={gameStarted}
+          gameAreaWidth={gameAreaSize.width}
+          gameAreaHeight={gameAreaSize.height}
         ></Overlay>
         <div style={playerStyle} className="player"></div>
       </div>
