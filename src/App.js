@@ -382,7 +382,7 @@ function App() {
         ></Overlay>
         <div style={playerStyle} className="player"></div>
       </div>
-      <Leaderboard gameSize={gameAreaSize} />
+      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} />
     </div>
   );
 }

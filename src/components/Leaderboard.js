@@ -13,7 +13,7 @@ const leaderBoardLine = {
   width: "5px",
 };
 
-const Leaderboard = ({ gameSize }) => {
+const Leaderboard = ({ gameSize, currentScore }) => {
   const [score, setScore] = useState(scoresData);
 
   useEffect(() => {
@@ -30,7 +30,9 @@ const Leaderboard = ({ gameSize }) => {
       className="leaderboard__container"
       style={{ width: gameSize.width + "px" }}
     >
-      <div className="leaderboard__scroreContainer">Current score:</div>
+      <div className="leaderboard__scroreContainer">
+        Current score: {currentScore}
+      </div>
       <div className="leaderboard__subcontainer">
         <div style={leaderBoardStyle}>
           {score.map((item) => (
