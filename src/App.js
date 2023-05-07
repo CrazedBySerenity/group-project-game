@@ -127,7 +127,7 @@ function App() {
 
   function playerShoot() {
     if (spaceIsPressed && shotCooldown <= 0) {
-      let newShotTop = playerPos + playerSize / 2 + 5;
+      let newShotTop = playerPos + playerSize * 0.5 - 5;
 
       if (currentShots.length < maxShots) {
         setShotCooldown(shotCooldownTime);
