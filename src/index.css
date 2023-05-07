@@ -107,13 +107,14 @@ code {
 }
 
 .player {
-  border-radius: 10% 50% 50% 10%;
+  background-image: url(images/Ship.png);
+  background-size: cover;
 }
 
 .asteroid {
   position: absolute;
-  background-color: grey;
-  border-radius: 25%;
+  background-image: url(images/Asteroid.png);
+  background-size: cover;
 }
 
 .shot {

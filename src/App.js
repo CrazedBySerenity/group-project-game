@@ -54,7 +54,7 @@ function App() {
   const validDownKeyCodes = [40, 83];
   const validRestartKeyCodes = [13, 82];
 
-  const playerSize = 40;
+  const playerSize = 64;
   const playerOffset = 30;
   const asteroidSize = 50;
 
@@ -72,7 +72,7 @@ function App() {
 
   const playerStyle = {
     position: `absolute`,
-    backgroundColor: `${hitEffect}`,
+
     width: `${playerSize}px`,
     height: `${playerSize}px`,
     top: `${playerPos}px`,
@@ -127,7 +127,7 @@ function App() {
 
   function playerShoot() {
     if (spaceIsPressed && shotCooldown <= 0) {
-      let newShotTop = playerPos + playerSize / 2 + 5;
+      let newShotTop = playerPos + playerSize * 0.5 - 5;
 
       if (currentShots.length < maxShots) {
         setShotCooldown(shotCooldownTime);
