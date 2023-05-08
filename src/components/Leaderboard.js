@@ -13,17 +13,26 @@ const leaderBoardLine = {
   width: "5px",
 };
 
-const Leaderboard = ({ gameSize, currentScore }) => {
-  const [score, setScore] = useState(scoresData);
+const Leaderboard = ({ gameSize, currentScore, gameOver }) => {
+  const [score, setScore] = useState([]);
+
+  const fetchLeaderBoard = async () => {
+    const response = await fetch("http://localhost:6001/topPlayers");
+    const data = await response.json();
+
+    setScore(data);
+  }
 
   useEffect(() => {
+    fetchLeaderBoard();
+
     let sortedScores = score.sort((s1, s2) =>
       s1.score < s2.score ? 1 : s1.score > s2.score ? -1 : 0
     );
 
     setScore(sortedScores);
     console.log(sortedScores);
-  }, []);
+  }, [gameOver]);
 
   return (
     <div

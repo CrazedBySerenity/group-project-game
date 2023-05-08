@@ -2,6 +2,7 @@ import "./App.css";
 import { useEffect, useState, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { now as d3Now, interval as d3Interval } from "d3-timer";
+import axios from "axios";
 
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
@@ -102,6 +103,11 @@ function App() {
     return <>{renderShots()}</>;
   };
 
+  const saveHighscore = async() => {
+    const player = {name: "Player", score: currentScore};
+    axios.post("http://localhost:6001/topPlayers", player).then(console.log("Player added to highscores"));
+  }
+
   function renderAsteroids() {
     let visibleAsteroids = currentAsteroids.map((asteroid) => (
       <Asteroid
@@ -186,6 +192,10 @@ function App() {
 
   function LoseGame() {
     console.log("Game Over");
+
+    //Check if current score deserves to be a highscore
+    saveHighscore();
+
     setCurrentAsteroids([]);
     setCurrentShots([]);
     setgameOver(true);
@@ -393,7 +403,7 @@ function App() {
         ></Overlay>
         <div style={playerStyle} className="player"></div>
       </div>
-      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} />
+      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} gameOver={gameOver}/>
     </div>
   );
 }
