@@ -93,6 +93,8 @@ function App() {
     height: `${gameAreaSize.height}px`,
   };
 
+
+
   const AsteroidRenderer = () => {
     return <>{renderAsteroids()}</>;
   };
@@ -281,7 +283,6 @@ function App() {
       if (!gameStarted) return;
       let now = d3Now();
       let deltaTime = (now - lastCall.current) / 1000;
-      console.log(deltaTime);
       lastCall.current = now;
       if (deltaTime > 200) deltaTime = 0.01;
 
@@ -314,8 +315,6 @@ function App() {
             asteroid.top > playerPos + playerSize
           ) {
             LoseGame();
-            // hit = true;
-            // console.log("hit");
           }
           if (currentShots.length >= 1) {
             currentShots.map((shot) => {
