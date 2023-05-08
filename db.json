@@ -22,8 +22,18 @@
     },
     {
       "name": "Player",
-      "score": 150,
+      "score": 1200,
       "id": 5
+    },
+    {
+      "name": "Player",
+      "score": 3150,
+      "id": 6
+    },
+    {
+      "name": "Player",
+      "score": 8400,
+      "id": 7
     }
   ]
 }
