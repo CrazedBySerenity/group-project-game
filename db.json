@@ -1,0 +1,29 @@
+{
+  "topPlayers": [
+    {
+      "name": "Player",
+      "score": 750,
+      "id": 9
+    },
+    {
+      "name": "Player",
+      "score": 1200,
+      "id": 10
+    },
+    {
+      "name": "Player",
+      "score": 450,
+      "id": 11
+    },
+    {
+      "name": "Player",
+      "score": 750,
+      "id": 12
+    },
+    {
+      "name": "Player",
+      "score": 3300,
+      "id": 13
+    }
+  ]
+}

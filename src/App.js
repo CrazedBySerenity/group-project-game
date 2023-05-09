@@ -184,6 +184,7 @@ function App() {
 
   function LoseGame() {
     console.log("Game Over");
+
     setCurrentAsteroids([]);
     setCurrentShots([]);
     setgameOver(true);
@@ -281,7 +282,6 @@ function App() {
       if (!gameStarted) return;
       let now = d3Now();
       let deltaTime = (now - lastCall.current) / 1000;
-      console.log(deltaTime);
       lastCall.current = now;
       if (deltaTime > 200) deltaTime = 0.01;
 
@@ -314,8 +314,6 @@ function App() {
             asteroid.top > playerPos + playerSize
           ) {
             LoseGame();
-            // hit = true;
-            // console.log("hit");
           }
           if (currentShots.length >= 1) {
             currentShots.map((shot) => {
@@ -394,7 +392,7 @@ function App() {
         ></Overlay>
         <div style={playerStyle} className="player"></div>
       </div>
-      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} />
+      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} gameOver={gameOver}/>
     </div>
   );
 }
