@@ -1,39 +1,29 @@
 {
   "topPlayers": [
     {
-      "id": 1,
-      "name": "Oliver",
-      "score": 1000
-    },
-    {
-      "id": 3,
-      "name": "Ville",
-      "score": 1500
-    },
-    {
-      "id": 2,
-      "name": "Tobias",
-      "score": 1250
-    },
-    {
-      "id": 4,
-      "name": "Tobias",
-      "score": 12250
+      "name": "Player",
+      "score": 750,
+      "id": 9
     },
     {
       "name": "Player",
       "score": 1200,
-      "id": 5
+      "id": 10
     },
     {
       "name": "Player",
-      "score": 3150,
-      "id": 6
+      "score": 450,
+      "id": 11
     },
     {
       "name": "Player",
-      "score": 8400,
-      "id": 7
+      "score": 750,
+      "id": 12
+    },
+    {
+      "name": "Player",
+      "score": 3300,
+      "id": 13
     }
   ]
 }

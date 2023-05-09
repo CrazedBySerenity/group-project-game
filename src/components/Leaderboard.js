@@ -19,15 +19,32 @@ const Leaderboard = ({ gameSize, currentScore, gameOver }) => {
   const [shouldPostScore, setShouldPostScore] = useState(false); 
 
   const fetchLeaderBoard = async () => {
-    const response = await fetch("http://localhost:6001/topPlayers");
-    const data = await response.json();
+    const data = await axios
+    .get("http://localhost:6001/topPlayers")
+    .then(console.log("Updated leaderboard"));
 
-    setScore(data);
+    setScore(data.data);
   }
 
   const saveHighscore = async() => {
     const player = {name: "Player", score: currentScore};
-    //axios.delete("http://localhost:6001/topPlayers", sortedScores[sortedScores.length -1]);
+
+    let itemToDelete = {id: -1, score: Number.POSITIVE_INFINITY};
+    for(let i = 0; i < sortedScores.length; i++){
+      let valueToCheck = sortedScores[i].score;
+      if(valueToCheck < itemToDelete.score){
+        itemToDelete.score = valueToCheck;
+        itemToDelete.id = sortedScores[i].id;
+      }
+    }
+
+    console.log(itemToDelete.id);
+    
+    if(itemToDelete.id > -1 && sortedScores.length >= 5){
+      axios.delete(`http://localhost:6001/topPlayers/${itemToDelete.id}`);
+      console.log("Removed an entry from the leaderboard");
+    }
+
     axios.post("http://localhost:6001/topPlayers", player).then(console.log("Player added to highscores"));
     setShouldPostScore(false);
   }
