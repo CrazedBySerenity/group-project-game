@@ -2,28 +2,55 @@
   "topPlayers": [
     {
       "name": "Player",
-      "score": 750,
-      "id": 9
-    },
-    {
-      "name": "Player",
       "score": 1200,
       "id": 10
     },
     {
       "name": "Player",
-      "score": 450,
-      "id": 11
-    },
-    {
-      "name": "Player",
-      "score": 750,
-      "id": 12
-    },
-    {
-      "name": "Player",
       "score": 3300,
       "id": 13
+    },
+    {
+      "name": "Player",
+      "score": 3450,
+      "id": 14
+    },
+    {
+      "name": "Player",
+      "score": 900,
+      "id": 15
+    },
+    {
+      "name": "Player",
+      "score": 1200,
+      "id": 16
+    }
+  ],
+  "profiles": [
+    {
+      "username": "oliver1",
+      "password": "123",
+      "id": 1
+    },
+    {
+      "username": "123",
+      "password": "123",
+      "id": 2
+    },
+    {
+      "username": "oliver2",
+      "password": "ghj",
+      "id": 3
+    },
+    {
+      "username": "tyest",
+      "password": "ghj",
+      "id": 4
+    },
+    {
+      "username": "tyests",
+      "password": "ghj",
+      "id": 5
     }
   ]
 }

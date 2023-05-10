@@ -6,6 +6,8 @@ import { now as d3Now, interval as d3Interval } from "d3-timer";
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
 import Overlay from "./Overlay";
+import Login from "./Login";
+import Register from "./Register";
 
 import useWindowDimensions from "./UseWindowDimensions";
 import Leaderboard from "./components/Leaderboard";
@@ -374,6 +376,8 @@ function App() {
 
   return (
     <div className="App">
+      <Register />
+      <Login />
       <div style={gameAreaStyle} className="game-area">
         <div style={backgroundContainerStyle} className="background__container">
           <div style={tileOneStyle} className="background__tile"></div>
@@ -392,7 +396,11 @@ function App() {
         ></Overlay>
         <div style={playerStyle} className="player"></div>
       </div>
-      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} gameOver={gameOver}/>
+      <Leaderboard
+        gameSize={gameAreaSize}
+        currentScore={currentScore}
+        gameOver={gameOver}
+      />
     </div>
   );
 }
