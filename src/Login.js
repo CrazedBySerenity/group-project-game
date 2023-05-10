@@ -12,58 +12,36 @@ const Login = () => {
     const user = users.find(
       (user) => user.username === username && user.username === password
     );
-    if (user) return user;
+    console.log(user);
+    if (user.username === username && user.password === password) return user;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    /*if (user === "" || password === "") {
+    if (username === "" || password === "") {
       alert("All fields are required");
-    }*/
-
-    const handleSubmit = async () => {
+    } else if (username.includes(" ") || password.includes.includes(" ")) {
+      alert("No whitespaces allowed");
+    } else {
       const user = await axios
-        .get("/users")
-        .then((res) => checkUsername(res.data, username, password));
+        .get("/profiles")
+        .then((res) => checkUsername(res.data, username, password))
+        .catch((error) => {
+          console.log(error);
+        });
       if (user) {
         alert("Login successful!");
       } else {
         alert("Invalid username or password!");
+        setPassword("");
+        setUsername("");
 
         //   if (user.username === username && user.password === password)
         //     // navigate("/");
         // }
       }
-      return (
-        <div className="container">
-          <div>
-            <form className="form-container">
-              <h1>Welcome!</h1>
-              <label>
-                <input
-                  type="text"
-                  placeholder="Username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </label>
-              <label>
-                <input type="password" placeholder="Password" />
-              </label>
-              <button
-                className="btn"
-                type="submit"
-                value={password}
-                onchange={(e) => setPassword(e.target.value)}
-              >
-                <p>Log in</p>
-              </button>
-            </form>
-          </div>
-        </div>
-      );
-    };
+    }
   };
   return (
     <div className="container">
@@ -79,14 +57,14 @@ const Login = () => {
             />
           </label>
           <label>
-            <input type="password" placeholder="Password" />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </label>
-          <button
-            className="btn"
-            type="submit"
-            value={password}
-            onchange={(e) => setPassword(e.target.value)}
-          >
+          <button className="btn" type="submit" onClick={handleSubmit}>
             <p>Log in</p>
           </button>
         </form>

@@ -15,15 +15,22 @@ const Register = () => {
     const user = await axios
       .get("http://localhost:6001/profiles")
       .then((res) => checkUsername(res.data, username));
-
-    if (user) {
+    if (username === "" || password === "") {
+      alert("Please enter all fields");
+    } else if (username.includes(" ") || password.includes.includes(" ")) {
+      alert("No whitespaces allowed");
+    } else if (user) {
       alert("Username already exists!");
     } else {
       const newUser = { username, password };
 
       axios
         .post("http://localhost:6001/profiles", newUser)
+        .then(alert("User created"))
         .then(console.log("User created"));
+
+      setUsername("");
+      setPassword("");
     }
   };
 

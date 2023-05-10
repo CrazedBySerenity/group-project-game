@@ -376,8 +376,6 @@ function App() {
 
   return (
     <div className="App">
-      <Register />
-      <Login />
       <div style={gameAreaStyle} className="game-area">
         <div style={backgroundContainerStyle} className="background__container">
           <div style={tileOneStyle} className="background__tile"></div>
@@ -401,6 +399,8 @@ function App() {
         currentScore={currentScore}
         gameOver={gameOver}
       />
+      <Register />
+      <Login />
     </div>
   );
 }
