@@ -16,10 +16,9 @@ const Register = () => {
     const user = await axios
       .get("http://localhost:6001/profiles")
       .then((res) => checkUsername(res.data, username));
+
     if (username === "" || password === "") {
       alert("Please enter all fields");
-    } else if (username.includes(" ") || password.includes.includes(" ")) {
-      alert("No whitespaces allowed");
     } else if (user) {
       alert("Username already exists!");
     } else {
@@ -29,10 +28,9 @@ const Register = () => {
         .post("http://localhost:6001/profiles", newUser)
         .then(alert("User created"))
         .then(console.log("User created"));
-
-      setUsername("");
-      setPassword("");
     }
+    setUsername("");
+    setPassword("");
   };
 
   return (
@@ -59,7 +57,13 @@ const Register = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
-          <ReusableButton onClick={handleSubmit}>Register</ReusableButton>
+          <button
+            type="submit"
+            className="reusable__button"
+            onClick={handleSubmit}
+          >
+            Register
+          </button>
         </form>
       </div>
     </div>
