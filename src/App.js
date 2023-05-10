@@ -191,8 +191,7 @@ function App() {
   // --> Checks if the player has pressed the button to shoot (spaceIsPressed) and the shooting cooldown is over (shotCooldown)
   // --> Also checks to make sure the player has not already fired too many shots, if either check fails do nothing
   // --> Creates a new variable (newShotTop) with the correct spawn-position for the new shot based on player position and size
-  // --> Adds a new object to the setCurrentShotsn array
-  // --> Assigns the new object the properties:
+  // --> Adds a new object to the setCurrentShots array and assigns it the properties:
   //    --> pos based on where to spawn the shot horizontally
   //    --> top based on newShotTop (see above)
   //    --> id based on a new unique id from uuidv4
@@ -215,8 +214,15 @@ function App() {
   // It then gives it a random top-position within the bounds of the game-area
   //
   // Basic flow:
-  // --> 
-  //
+  // --> Grabs the current time in milliseconds
+  // --> Checks if the previous timer has expired (asteroidTimer), if not do nothing
+  // --> Sets the new timer by adding a random amount of milliseconds between an interval (max and min within asteroidSpawntimer)
+  // --> Checks if the limit for how many asteroids are allowed simultaneously is already reached, if so do nothing
+  // --> Randomises a top position within the height of the game-area for the new asteroid
+  // --> Adds a new object to the currentAsteroids array and assigns it the properties:
+  //    --> pos based on the edge of the game-area (gameAreaSize.width)
+  //    --> top based on the previosuly randomised top position
+  //    --> id based on a new unique id from uuidv4
 
   function addAsteroid() {
     let now = d3Now();
