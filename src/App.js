@@ -416,7 +416,7 @@ function App() {
             setUserRegister(false);
           }}
         >
-          Login
+          Log in
         </ReusableButton>
         <ReusableButton
           onClick={(e) => {

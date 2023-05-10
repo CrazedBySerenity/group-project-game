@@ -1,17 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import ReusableButton from "./components/ReusableButton";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  // const navigate = useNavigate();
-
   const checkUsername = (users, username, password) => {
     const user = users.find(
-      (user) => user.username === username && user.username === password
+      (user) => user.username === username && user.password === password
     );
     console.log(user);
     if (user.username === username && user.password === password) return user;
@@ -22,27 +18,27 @@ const Login = () => {
 
     if (username === "" || password === "") {
       alert("All fields are required");
-    } else if (username.includes(" ") || password.includes.includes(" ")) {
-      alert("No whitespaces allowed");
-    } else {
-      const user = await axios
-        .get("/profiles")
-        .then((res) => checkUsername(res.data, username, password))
-        .catch((error) => {
-          console.log(error);
-        });
-      if (user) {
-        alert("Login successful!");
-      } else {
-        alert("Invalid username or password!");
-        setPassword("");
-        setUsername("");
-
-        //   if (user.username === username && user.password === password)
-        //     // navigate("/");
-        // }
-      }
     }
+
+    const user = await axios
+      .get("/profiles")
+      .then((res) => checkUsername(res.data, username, password))
+      .catch((error) => {
+        console.log(error);
+      });
+    if (user) {
+      console.log("logging in");
+      console.log(user.id);
+      alert("Logged in!");
+      localStorage.setItem("user", JSON.stringify(user.id));
+    } else {
+      alert("Invalid username or password!");
+      setPassword("");
+      setUsername("");
+    }
+
+    setPassword("");
+    setUsername("");
   };
   return (
     <div className="wh-100 flex-center">
@@ -67,7 +63,13 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
-          <ReusableButton onClick={handleSubmit}>Log in</ReusableButton>
+          <button
+            type="submit"
+            className="reusable__button"
+            onClick={handleSubmit}
+          >
+            Log in
+          </button>
         </form>
       </div>
     </div>
