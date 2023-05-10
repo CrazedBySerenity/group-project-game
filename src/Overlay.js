@@ -1,10 +1,4 @@
-import ScoreDisplay from "./ScoreDisplay";
-
 const Overlay = ({gameOver, score, gameStarted}) => {
-  //   const overlayStyle = {
-  //     width: `${props.gameAreaWidth}px`,
-  //     height: `${props.gameAreaHeight}px`,
-  //   };
 
   if (gameOver) {
     return (

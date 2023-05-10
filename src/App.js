@@ -1,15 +1,21 @@
-//Imports for react components and third-party libraries
+// Imports for react components
+// useEffect - https://react.dev/reference/react/useEffect
+// useState - https://react.dev/reference/react/useState
+// useRef - https://react.dev/reference/react/useRef
+//
 import "./App.css"; // SUGGESTION: This can probably be deleted
 import { useEffect, useState, useRef } from "react";
 
 // Uuidv4 is used for creating unique ids for the shot and asteroid objects
 // More info:
 // https://www.npmjs.com/package/uuidv4
+//
 import { v4 as uuidv4 } from "uuid";
 
 // D3 is used as an alternative to the setinterval and date.now functions to slightly improve performance
 // More info:
 // https://www.npmjs.com/package/d3-timer
+//
 import { now as d3Now, interval as d3Interval } from "d3-timer";
 
 // Custom Components
@@ -30,12 +36,17 @@ import Shot from "./Shot";
 import Overlay from "./Overlay";
 import Leaderboard from "./components/Leaderboard";
 
-//Custom Hooks
+// Custom Hooks
 // useWindowDimensions - Simple hook that returns an object with a width and height property corresponding to the window size in pixels
 // return: {width: Current screen width, height: Current screen height}
+//
 import useWindowDimensions from "./UseWindowDimensions";
+//
 
 function App() {
+
+  // VARIABLE DECLARATION GOES HERE:
+
   let windowSize = useWindowDimensions();
 
   const gameAreaSize = {
@@ -50,13 +61,10 @@ function App() {
   const [asteroidTimer, setAsteroidTimer] = useState(0);
   const [currentShots, setCurrentShots] = useState([]);
   const [shotCooldown, setShotCooldown] = useState(0);
-  const [currentOverlay, setCurrentOverlay] = useState([]);
 
   const [downIsPressed, setDownIsPressed] = useState(false);
   const [upIsPressed, setUpIsPressed] = useState(false);
   const [spaceIsPressed, setSpaceIsPressed] = useState(false);
-
-  const [hitEffect, setHitEffect] = useState("blue");
 
   const [currentScore, setCurrentScore] = useState(0);
   const [gameOver, setgameOver] = useState(false);
@@ -87,6 +95,8 @@ function App() {
   const shotSpeed = 50;
   const shotCooldownTime = 100;
 
+  // Style variables to be able to change styles dynamically
+  //
   const gameAreaStyle = {
     backgroundColor: "black",
     width: `${gameAreaSize.width}px`,
@@ -116,13 +126,33 @@ function App() {
     height: `${gameAreaSize.height}px`,
   };
 
+
+  // AsteroidRenderer - Returns the Asteroids so they can be rendered
+  //
+  // Basic flow:
+  // --> Invoke renderAsteroids (returns Asteroid components)
+  // --> receive and return Asteroid components again
+  // --> Asteroid components are rendered
+  //
   const AsteroidRenderer = () => {
     return <>{renderAsteroids()}</>;
   };
-  const ShotRenderer = () => {
-    return <>{renderShots()}</>;
-  };
 
+  // renderAsteroids - Maps through the currentAsteroids array and returns an Asteroid component for each item it contains
+  //
+  // Basic flow:
+  // --> Create a new array (visibleAsteroids)
+  // --> Loop through the currentAsteroids array
+  // --> For every item (asteroid) it contains
+  //    --> Create a new Asteroid component
+  //    --> Assign the new component a new
+  //      --> key based on the current items id property
+  //      --> pos based on the current items pos property
+  //      --> top based on the current items top property
+  //      --> size based on the asteroidSize variable
+  //      --> Add this new component to the visibleAsteroids Array
+  // --> return the visibleAsteroids array (now containing zero or more Asteroid components with different values)
+  //
   function renderAsteroids() {
     let visibleAsteroids = currentAsteroids.map((asteroid) => (
       <Asteroid
@@ -135,6 +165,12 @@ function App() {
     return visibleAsteroids;
   }
 
+  // ShotRenderer - Copy of the AsteroidRenderer function except for shots
+  const ShotRenderer = () => {
+    return <>{renderShots()}</>;
+  };
+
+  // renderShots - Copy of the renderAsteroids function except for shots
   function renderShots() {
     let visibleShots = currentShots.map((shot) => (
       <Shot
@@ -148,18 +184,29 @@ function App() {
     return visibleShots;
   }
 
-  function playerShoot() {
-    if (spaceIsPressed && shotCooldown <= 0) {
-      let newShotTop = playerPos + playerSize * 0.5 - 5;
 
-      if (currentShots.length < maxShots) {
-        setShotCooldown(shotCooldownTime);
-        console.log("shot fired");
-        setCurrentShots([
-          ...currentShots,
-          { pos: 70, top: newShotTop, id: uuidv4(), width: 40, height: 10 },
-        ]);
-      }
+  // playerShoot - Adds a new item to the currentShots array with the values needed for a new shot to be rendered
+  //
+  // Basic flow:
+  // --> Checks if the player has pressed the button to shoot (spaceIsPressed) and the shooting cooldown is over (shotCooldown)
+  // --> Also checks to make sure the player has not already fired too many shots, if either check fails do nothing
+  // --> Creates a new variable (newShotTop) with the correct spawn-position for the new shot based on player position and size
+  // --> Adds a new object to the setCurrentShotsn array
+  // --> Assigns the new object the properties:
+  //    --> pos based on where to spawn the shot horizontally
+  //    --> top based on newShotTop (see above)
+  //    --> id based on a new unique id from uuidv4
+  //    --> width, height based on how big the shot should be
+  //
+  function playerShoot() {
+    if (spaceIsPressed && shotCooldown <= 0 && currentShots.length < maxShots) {
+      let newShotTop = playerPos + playerSize * 0.5 - 5;
+      setShotCooldown(shotCooldownTime);
+      console.log("shot fired");
+      setCurrentShots([
+        ...currentShots,
+        { pos: 70, top: newShotTop, id: uuidv4(), width: 40, height: 10 }, //SUGGESTION: Replace pos with playerSize + PlayerOffset
+      ]);
     }
   }
 
@@ -374,12 +421,6 @@ function App() {
           return shot;
         });
       }
-
-      if (hit) {
-        setHitEffect("red");
-      } else {
-        setHitEffect("blue");
-      }
     }, 5);
 
     return () => {
@@ -404,7 +445,6 @@ function App() {
         <ShotRenderer />
 
         <Overlay
-          content={currentOverlay}
           gameOver={gameOver}
           score={currentScore}
           gameStarted={gameStarted}
