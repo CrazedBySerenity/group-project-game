@@ -406,7 +406,10 @@ function App() {
         gameOver={gameOver}
       />
 
-      <div className="buttons__container">
+      <div
+        className="buttons__container"
+        style={{ width: gameAreaSize.width + "px" }}
+      >
         <ReusableButton
           onClick={(e) => {
             setUserLogin(!userLogin);
