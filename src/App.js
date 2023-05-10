@@ -1,14 +1,39 @@
-import "./App.css";
+//Imports for react components and third-party libraries
+import "./App.css"; // SUGGESTION: This can probably be deleted
 import { useEffect, useState, useRef } from "react";
+
+// Uuidv4 is used for creating unique ids for the shot and asteroid objects
+// More info:
+// https://www.npmjs.com/package/uuidv4
 import { v4 as uuidv4 } from "uuid";
+
+// D3 is used as an alternative to the setinterval and date.now functions to slightly improve performance
+// More info:
+// https://www.npmjs.com/package/d3-timer
 import { now as d3Now, interval as d3Interval } from "d3-timer";
 
+// Custom Components
+// Asteroid - Simple Component used to display the asteroid flying towards the player
+// props: pos, top, size
+//
+// Shot - Simple Component used to display the laser shots the player fires
+// props: pos, top, height, width
+//
+// Overlay - Simple component containing a UI overlay that displays different visuals depending on the gameOver and gameStarted variables
+// props: gameOver, score, gameStarted
+//
+// Leaderboard - Component that displays and updates a leaderboard containing the top 5 highest scores available in db.json
+// props:  gameSize, currentScore, gameOver
+//
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
 import Overlay from "./Overlay";
-
-import useWindowDimensions from "./UseWindowDimensions";
 import Leaderboard from "./components/Leaderboard";
+
+//Custom Hooks
+// useWindowDimensions - Simple hook that returns an object with a width and height property corresponding to the window size in pixels
+// return: {width: Current screen width, height: Current screen height}
+import useWindowDimensions from "./UseWindowDimensions";
 
 function App() {
   let windowSize = useWindowDimensions();
@@ -21,8 +46,6 @@ function App() {
   const [playerPos, setplayerPos] = useState(250);
   const [tileOnePos, setTileOnePos] = useState(0);
   const [tileTwoPos, setTileTwoPos] = useState(gameAreaSize.width);
-  const [asteroidPos, setAsteroidPos] = useState(gameAreaSize.width);
-  const [asteroidTop, setAsteroidTop] = useState(150);
   const [currentAsteroids, setCurrentAsteroids] = useState([]);
   const [asteroidTimer, setAsteroidTimer] = useState(0);
   const [currentShots, setCurrentShots] = useState([]);
@@ -365,8 +388,6 @@ function App() {
   }, [
     tileOnePos,
     tileTwoPos,
-    asteroidPos,
-    asteroidTop,
     playerPos,
     currentAsteroids,
     currentShots,

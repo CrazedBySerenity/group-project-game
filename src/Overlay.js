@@ -1,25 +1,25 @@
 import ScoreDisplay from "./ScoreDisplay";
 
-const Overlay = (props) => {
+const Overlay = ({gameOver, score, gameStarted}) => {
   //   const overlayStyle = {
   //     width: `${props.gameAreaWidth}px`,
   //     height: `${props.gameAreaHeight}px`,
   //   };
 
-  if (props.gameOver) {
+  if (gameOver) {
     return (
       <div className="wh-100 flex-center">
         <div className="game-over__container flex-center">
           <p className="game-over__text">Game over!</p>
           <div>
             <p className="game-over__text">Final Score</p>
-            <p className="game-over__text">{props.score}</p>
+            <p className="game-over__text">{score}</p>
           </div>
           <p className="game-over__text">Press ENTER to Restart...</p>
         </div>
       </div>
     );
-  } else if (!props.gameStarted) {
+  } else if (!gameStarted) {
     return (
       <div className="wh-100 flex-center">
         <div className="game-start__container flex-center">
