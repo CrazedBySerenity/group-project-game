@@ -210,8 +210,16 @@ function App() {
     }
   }
 
+  // addAsteroid - Similar to the playerShoot function except it also handles a timer,
+  // The function adds a new item to the currentAsteroids array if the previous timer is over,
+  // It then gives it a random top-position within the bounds of the game-area
+  //
+  // Basic flow:
+  // --> 
+  //
+
   function addAsteroid() {
-    let now = new Date().getTime();
+    let now = d3Now();
     //Check timer and set timer
     if (asteroidTimer < now) {
       let newTimer =
