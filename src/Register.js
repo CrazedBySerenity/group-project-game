@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import ReusableButton from "./components/ReusableButton";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -35,12 +36,13 @@ const Register = () => {
   };
 
   return (
-    <div className="container">
-      <div>
-        <form className="form-container">
-          <h1>Register User</h1>
+    <div className="wh-100 flex-center">
+      <div className="Login__container flex-center">
+        <form className="form__container">
+          <h2 style={{ color: "white" }}>Welcome!</h2>
           <label>
             <input
+              className="input__field"
               type="text"
               placeholder="Username"
               value={username}
@@ -50,15 +52,14 @@ const Register = () => {
 
           <label>
             <input
+              className="input__field"
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
-          <button className="btn" type="submit" onClick={handleSubmit}>
-            <p>Register</p>
-          </button>
+          <ReusableButton onClick={handleSubmit}>Register</ReusableButton>
         </form>
       </div>
     </div>

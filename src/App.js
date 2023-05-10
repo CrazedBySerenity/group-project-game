@@ -11,6 +11,7 @@ import Register from "./Register";
 
 import useWindowDimensions from "./UseWindowDimensions";
 import Leaderboard from "./components/Leaderboard";
+import ReusableButton from "./components/ReusableButton";
 
 function App() {
   let windowSize = useWindowDimensions();
@@ -40,6 +41,8 @@ function App() {
   const [currentScore, setCurrentScore] = useState(0);
   const [gameOver, setgameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const [userRegister, setUserRegister] = useState(false);
+  const [userLogin, setUserLogin] = useState(false);
 
   const lastCall = useRef(0);
 
@@ -391,7 +394,10 @@ function App() {
           gameStarted={gameStarted}
           gameAreaWidth={gameAreaSize.width}
           gameAreaHeight={gameAreaSize.height}
+          userLogin={userLogin}
+          userRegister={userRegister}
         ></Overlay>
+
         <div style={playerStyle} className="player"></div>
       </div>
       <Leaderboard
@@ -399,8 +405,25 @@ function App() {
         currentScore={currentScore}
         gameOver={gameOver}
       />
-      <Register />
-      <Login />
+
+      <div className="buttons__container">
+        <ReusableButton
+          onClick={(e) => {
+            setUserLogin(!userLogin);
+            setUserRegister(false);
+          }}
+        >
+          Login
+        </ReusableButton>
+        <ReusableButton
+          onClick={(e) => {
+            setUserRegister(!userRegister);
+            setUserLogin(false);
+          }}
+        >
+          Register
+        </ReusableButton>
+      </div>
     </div>
   );
 }

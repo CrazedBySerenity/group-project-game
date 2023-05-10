@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import ReusableButton from "./components/ReusableButton";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -44,12 +45,13 @@ const Login = () => {
     }
   };
   return (
-    <div className="container">
-      <div>
-        <form className="form-container">
-          <h1>Welcome!</h1>
+    <div className="wh-100 flex-center">
+      <div className="Login__container flex-center">
+        <form className="form__container">
+          <h2 style={{ color: "white" }}>Welcome!</h2>
           <label>
             <input
+              className="input__field"
               type="text"
               placeholder="Username"
               value={username}
@@ -58,15 +60,14 @@ const Login = () => {
           </label>
           <label>
             <input
+              className="input__field"
               type="password"
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </label>
-          <button className="btn" type="submit" onClick={handleSubmit}>
-            <p>Log in</p>
-          </button>
+          <ReusableButton onClick={handleSubmit}>Log in</ReusableButton>
         </form>
       </div>
     </div>

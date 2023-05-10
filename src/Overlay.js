@@ -1,4 +1,6 @@
 import ScoreDisplay from "./ScoreDisplay";
+import Register from "./Register";
+import Login from "./Login";
 
 const Overlay = (props) => {
   //   const overlayStyle = {
@@ -6,7 +8,11 @@ const Overlay = (props) => {
   //     height: `${props.gameAreaHeight}px`,
   //   };
 
-  if (props.gameOver) {
+  if (props.userRegister) {
+    return <Register></Register>;
+  } else if (props.userLogin) {
+    return <Login></Login>;
+  } else if (props.gameOver) {
     return (
       <div className="wh-100 flex-center">
         <div className="game-over__container flex-center">
