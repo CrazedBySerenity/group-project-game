@@ -7,8 +7,9 @@ import "./App.css"; // SUGGESTION: This can probably be deleted
 import { useEffect, useState, useRef } from "react";
 
 // Uuidv4 is used for creating unique ids for the shot and asteroid objects
+// The ids created by the uuidv4 function are strings and look roughly like 'b1c4a89e-4905-5e3c-b57f-dc92627d011e'
 // More info:
-// https://www.npmjs.com/package/uuidv4
+// https://www.npmjs.com/package/uuid
 //
 import { v4 as uuidv4 } from "uuid";
 
@@ -47,29 +48,55 @@ function App() {
 
   // VARIABLE DECLARATION GOES HERE:
 
+  // OBJECT CONTAINING CURRENT SIZE OF THE WINDOW [OBJECT]
   let windowSize = useWindowDimensions();
 
+  // OBJECT CONTAINING THE SIZE FOR THE GAMEAREA BASED ON WINDOW SIZE
   const gameAreaSize = {
     width: windowSize.width < 2000 ? windowSize.width : 2000,
     height: windowSize.height < 500 ? windowSize.height : 500,
   };
 
+  // THE PLAYERS CURRENT POSITION (VERTICAL) [NUMBER]
   const [playerPos, setplayerPos] = useState(250);
+  // THE POSITION OF THE FIRST BACKGROUND TILE (FIRST AND SECOND HAS NO REAL IMPLICATION SINCE THEY SWAP AROUND) [NUMBER]
   const [tileOnePos, setTileOnePos] = useState(0);
+  // THE POSTION OF THE SECOND BACKGROUND TILE (FIRST AND SECOND HAS NO REAL IMPLICATION SINCE THEY SWAP AROUND) [NUMBER]
   const [tileTwoPos, setTileTwoPos] = useState(gameAreaSize.width);
+
+  // THE ARRAY CONTAINING THE CURRENT ASTEROIDS ON THE FIELD [ARRAY OF OBJECTS]
+  // ASTEROIDS ARE REPRESENTED WITH OBJECTS AND IT'S RELEVANT VALUES WITH PROPERTIES
+  //
+  // STRUCTURE EXAMPLE: [{pos, top, id}, {pos, top, id}, {pos, top, id}, {pos, top, id}]
   const [currentAsteroids, setCurrentAsteroids] = useState([]);
+  // THE TIME WHEN THE NEXT ASTEROID SHOULD BE SPAWNED IN, REPRESENTED BY A NUMBER IN MILLISECONDS SLIGHTLY LARGER THAN DATE.NOW [NUMBER]
+  // SUGGESTION: ELABORATE ON THIS EXPLANATION
   const [asteroidTimer, setAsteroidTimer] = useState(0);
+  // THE ARRAY CONTAINING THE CURRENT SHOTS ON THE FIELD [ARRAY OF OBJECTS]
+  // SHOTS ARE REPRESENTED WITH OBJECTS AND IT'S RELEVANT VALUES WITH PROPERTIES
+  //
+  // STRUCTURE EXAMPLE: [{pos, top, id, width, height}, {pos, top, id, width, height}, {pos, top, id, width, height}]
   const [currentShots, setCurrentShots] = useState([]);
+  // THE COOLDOWN UNTIL THE NEXT SHOT CAN BE FIRED, REPRESENTED IN A NUMBER THAT DECREASES BY ONE EVERY GAME-FRAME (EVERY INTERVAL) [NUMBER]
+  // SUGGESTION: UPDATE THE SHOT COOLDOWN TO WORK THE SAME WAY THE ASTEROIDTIMER WORKS
   const [shotCooldown, setShotCooldown] = useState(0);
 
+  // A BOOLEAN OF WHETHER DOWN IS CURRENTLY BEING PRESSED OR NOT [BOOLEAN]
   const [downIsPressed, setDownIsPressed] = useState(false);
+  // A BOOLEAN OF WHETHER UP IS CURRENTLY BEING PRESSED OR NOT [BOOLEAN]
   const [upIsPressed, setUpIsPressed] = useState(false);
+  // A BOOLEAN OF WHETHER SPACE IS CURRENTLY BEING PRESSED OR NOT [BOOLEAN]
+  // SUGGESTION: SWAP TO shootIsPressed AND ADD THE ABILITY TO HAVE MULTIPLE VALID KEYS FOR SHOOTING
   const [spaceIsPressed, setSpaceIsPressed] = useState(false);
 
+  // THE PLAYERS CURRENT SCORE [NUMBER]
   const [currentScore, setCurrentScore] = useState(0);
+  // A BOOLEAN OF WHETHER THE GAME IS OVER OR NOT [BOOLEAN]
   const [gameOver, setgameOver] = useState(false);
+  // A BOOLEAN OF WHETHER THE GAME HAS STARTED OR NOT [BOOLEAN]
   const [gameStarted, setGameStarted] = useState(false);
 
+  // SUGGESTION: REMOVE OR ELABORATE ON THIS
   const lastCall = useRef(0);
 
   const asteroidSpawnTimer = {
@@ -223,7 +250,7 @@ function App() {
   //    --> pos based on the edge of the game-area (gameAreaSize.width)
   //    --> top based on the previosuly randomised top position
   //    --> id based on a new unique id from uuidv4
-
+  //
   function addAsteroid() {
     let now = d3Now();
     //Check timer and set timer
@@ -254,6 +281,13 @@ function App() {
     }
   }
 
+  // removeAsteroid - Filters the currentAsteroids array and returns all items except the one with the given id
+  // parameters: id (string created from uuidv4)
+  //
+  // Basic flow:
+  // --> Filter through the currentAsteroids array, return a new array containing all items except the one with the id given as a parameter
+  // --> Assign this new array as the currentAsteroids array
+  //
   function removeAsteroid(id) {
     setCurrentAsteroids(
       currentAsteroids.filter((asteroid) => asteroid.id !== id)
@@ -262,9 +296,20 @@ function App() {
     setCurrentScore((currentScore) => currentScore + baseAsteroidScore);
   }
 
+  // removeShot - Same as the removeAsteroid function but with shots
+  //
   function removeShot(id) {
     setCurrentShots(currentShots.filter((shot) => shot.id !== id));
   }
+
+  // LoseGame - Sets the values that indicate the game is over and resets all shots and asteroids
+  //
+  // Basic flow:
+  // --> Empty the currentAsteroids array
+  // --> Empty currentShots array
+  // --> Set the gameOver boolean to true
+  // --> Set the gameStarted boolean to false
+  //
 
   function LoseGame() {
     console.log("Game Over");
@@ -272,7 +317,9 @@ function App() {
     setCurrentAsteroids([]);
     setCurrentShots([]);
     setgameOver(true);
-    setGameStarted(false);
+    setGameStarted(false); 
+    // SUGGESTION: Remove gameStarted being set to false and instead pass the gameOver variable to the Overlay component 
+    // so that it can check if gameOver is true. All other places where gameStarted is used already has this kind of check
   }
   //COLLECTING PLAYER INPUT
   useEffect(() => {
