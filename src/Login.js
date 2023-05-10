@@ -26,11 +26,13 @@ const Login = () => {
       .catch((error) => {
         console.log(error);
       });
-    if (user) {
+    if (user.username === username && user.password === password) {
       console.log("logging in");
       console.log(user.id);
       alert("Logged in!");
       localStorage.setItem("user", JSON.stringify(user.id));
+      localStorage.setItem("name", JSON.stringify(user.username));
+      window.location.href = "/";
     } else {
       alert("Invalid username or password!");
       setPassword("");

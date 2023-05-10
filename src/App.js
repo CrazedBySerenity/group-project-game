@@ -2,16 +2,15 @@ import "./App.css";
 import { useEffect, useState, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { now as d3Now, interval as d3Interval } from "d3-timer";
+import { authenticate } from "./helpers";
 
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
 import Overlay from "./Overlay";
-import Login from "./Login";
-import Register from "./Register";
+import BottomBar from "./components/BottomBar";
 
 import useWindowDimensions from "./UseWindowDimensions";
 import Leaderboard from "./components/Leaderboard";
-import ReusableButton from "./components/ReusableButton";
 
 function App() {
   let windowSize = useWindowDimensions();
@@ -406,27 +405,13 @@ function App() {
         gameOver={gameOver}
       />
 
-      <div
-        className="buttons__container"
-        style={{ width: gameAreaSize.width + "px" }}
-      >
-        <ReusableButton
-          onClick={(e) => {
-            setUserLogin(!userLogin);
-            setUserRegister(false);
-          }}
-        >
-          Log in
-        </ReusableButton>
-        <ReusableButton
-          onClick={(e) => {
-            setUserRegister(!userRegister);
-            setUserLogin(false);
-          }}
-        >
-          Register
-        </ReusableButton>
-      </div>
+      <BottomBar
+        gameAreaSize={gameAreaSize}
+        setUserLogin={setUserLogin}
+        setUserRegister={setUserRegister}
+        userLogin={userLogin}
+        userRegister={userRegister}
+      />
     </div>
   );
 }

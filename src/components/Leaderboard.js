@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { authenticate } from "../helpers";
 
 const leaderBoardStyle = {
   backgroundColor: "black",
@@ -17,17 +18,28 @@ const Leaderboard = ({ gameSize, currentScore, gameOver }) => {
   const [sortedScores, setSortedScores] = useState([]);
   const [score, setScore] = useState([]);
   const [shouldPostScore, setShouldPostScore] = useState(false);
+  const [scoreName, setScoreName] = useState("Buzz Lightyear");
 
   const fetchLeaderBoard = async () => {
     const data = await axios
-      .get("http://localhost:6001/topPlayers")
+      .get("http://localhost:6001/topPlayers/")
       .then(console.log("Updated leaderboard"));
 
     setScore(data.data);
   };
 
+  const getPlayerName = () => {
+    const auth = authenticate();
+    if (auth) {
+      setScoreName(JSON.parse(localStorage.getItem("name")));
+    } else {
+      setScoreName("buzz");
+    }
+  };
+
   const saveHighscore = async () => {
-    const player = { name: "Player", score: currentScore };
+    getPlayerName();
+    const player = { name: scoreName, score: currentScore };
 
     let itemToDelete = { id: -1, score: Number.POSITIVE_INFINITY };
     for (let i = 0; i < sortedScores.length; i++) {
