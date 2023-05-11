@@ -11,19 +11,19 @@
       "id": 14
     },
     {
-      "name": "Player",
-      "score": 1200,
-      "id": 16
-    },
-    {
-      "name": "Buzz",
-      "score": 1200,
-      "id": 18
-    },
-    {
-      "name": "Buzz Lightyear",
-      "score": 750,
+      "name": "Buzz ",
+      "score": 1350,
       "id": 19
+    },
+    {
+      "name": "test",
+      "score": 1350,
+      "id": 20
+    },
+    {
+      "name": "test",
+      "score": 1350,
+      "id": 21
     }
   ],
   "profiles": [
@@ -91,6 +91,11 @@
       "username": "gdr",
       "password": "ger",
       "id": 13
+    },
+    {
+      "username": "asd",
+      "password": "asd",
+      "id": 14
     }
   ]
 }
