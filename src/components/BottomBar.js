@@ -6,6 +6,7 @@ const BottomBar = ({
   userLogin,
   setUserRegister,
   userRegister,
+  playerName,
 }) => {
   const auth = authenticate();
 
@@ -15,7 +16,7 @@ const BottomBar = ({
         className="buttons__container"
         style={{ width: gameAreaSize.width + "px" }}
       >
-        <h2 style={{ color: "white" }}>Logged in as </h2>
+        <p className="generic__text">{`Logged in as ${playerName}`}</p>
         <ReusableButton
           onClick={(e) => {
             localStorage.removeItem("user");

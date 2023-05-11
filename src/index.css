@@ -156,6 +156,7 @@ code {
 .buttons__container {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
 }
 .reusable__button {
   color: #fff;
@@ -201,4 +202,13 @@ code {
   margin: 20px;
   padding: 10px;
   margin-left: 10px;
+}
+
+.generic__text {
+  color: #fff;
+  font-family: "Press Start 2P";
+  font-size: 24px;
+  margin-right: 20px;
+
+  padding: 15px;
 }

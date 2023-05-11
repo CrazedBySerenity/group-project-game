@@ -14,11 +14,11 @@ const leaderBoardLine = {
   width: "5px",
 };
 
-const Leaderboard = ({ gameSize, currentScore, gameOver }) => {
+const Leaderboard = ({ gameSize, currentScore, gameOver, playerName }) => {
   const [sortedScores, setSortedScores] = useState([]);
   const [score, setScore] = useState([]);
   const [shouldPostScore, setShouldPostScore] = useState(false);
-  const [scoreName, setScoreName] = useState("Buzz Lightyear");
+  const [scoreName, setScoreName] = useState("DEFAULT");
 
   const fetchLeaderBoard = async () => {
     const data = await axios
@@ -28,17 +28,8 @@ const Leaderboard = ({ gameSize, currentScore, gameOver }) => {
     setScore(data.data);
   };
 
-  const getPlayerName = () => {
-    const auth = authenticate();
-    if (auth) {
-      setScoreName(JSON.parse(localStorage.getItem("name")));
-    } else {
-      setScoreName("buzz");
-    }
-  };
-
   const saveHighscore = async () => {
-    getPlayerName();
+    setScoreName(playerName);
     const player = { name: scoreName, score: currentScore };
 
     let itemToDelete = { id: -1, score: Number.POSITIVE_INFINITY };

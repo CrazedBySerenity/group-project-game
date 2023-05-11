@@ -42,6 +42,7 @@ function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [userRegister, setUserRegister] = useState(false);
   const [userLogin, setUserLogin] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState("");
 
   const lastCall = useRef(0);
 
@@ -186,9 +187,18 @@ function App() {
     setCurrentShots(currentShots.filter((shot) => shot.id !== id));
   }
 
+  function getUserName() {
+    const auth = authenticate();
+    if (auth) {
+      return JSON.parse(localStorage.getItem("name"));
+    } else {
+      return "star";
+    }
+  }
+
   function LoseGame() {
     console.log("Game Over");
-
+    setLoggedInUser(getUserName);
     setCurrentAsteroids([]);
     setCurrentShots([]);
     setgameOver(true);
@@ -280,6 +290,7 @@ function App() {
 
   //MOVEMENT AND COLLISION
   useEffect(() => {
+    setLoggedInUser(getUserName);
     let interval;
     interval = d3Interval(() => {
       if (gameOver) return;
@@ -403,6 +414,7 @@ function App() {
         gameSize={gameAreaSize}
         currentScore={currentScore}
         gameOver={gameOver}
+        playerName={loggedInUser}
       />
 
       <BottomBar
@@ -411,6 +423,7 @@ function App() {
         setUserRegister={setUserRegister}
         userLogin={userLogin}
         userRegister={userRegister}
+        playerName={loggedInUser}
       />
     </div>
   );
