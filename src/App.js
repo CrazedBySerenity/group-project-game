@@ -77,12 +77,9 @@ function App() {
   //
   // STRUCTURE EXAMPLE: [{pos, top, id, width, height}, {pos, top, id, width, height}, {pos, top, id, width, height}]
   const [currentShots, setCurrentShots] = useState([]);
-  // THE COOLDOWN UNTIL THE NEXT SHOT CAN BE FIRED, REPRESENTED IN A NUMBER THAT DECREASES BY ONE EVERY GAME-FRAME (EVERY INTERVAL) [NUMBER]
-  // SUGGESTION: UPDATE THE SHOT COOLDOWN TO WORK THE SAME WAY THE ASTEROIDTIMER WORKS
-  const [shotCooldown, setShotCooldown] = useState(0);
 
-  // NEW AND REPLACES SHOTCOOLDOWN
   // THE TIME WHEN THE NEXT SHOT SHOULD BE SPAWNED IN, REPRESENTED BY A NUMBER IN MILLISECONDS SLIGHTLY LARGER THAN DATE.NOW [NUMBER]
+  // REPLACES THE OLD SHOTCOOLDOWN
   // SUGGESTION: ELABORATE ON THIS EXPLANATION
   const [shotTimer, setShotTimer] = useState(0);
 
@@ -104,30 +101,54 @@ function App() {
   // SUGGESTION: REMOVE OR ELABORATE ON THIS
   const lastCall = useRef(0);
 
+  // THE MINIMUM AND MAXIMUM TIME TO WAIT BEFORE SPAWNING AN ASTEROID, IN SECONDS [OBJECT]
+  // LATER ASSIGNED RANDOMLY BETWEEN THESE NUMBERS
   const asteroidSpawnTimer = {
     min: 1,
     max: 3,
   };
-
-  const shotSpawnTimer = 0.1;
-
+  // HOW FAR THE ASTEROID SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
+  const asteroidSpeed = 10;
+  // HOW MANY ASTEROIDS ARE ALLOWED TO BE ON SCREEN AT THE SAME TIME [NUMBER]
   const maxAsteroids = 10;
-  const maxShots = 10;
+  // HOW MUCH SCORE THE PLAYER GAINS FOR DESTROYING AN ASTEROID [NUMBER]
   const baseAsteroidScore = 150;
-
-  const validUpKeyCodes = [38, 87];
-  const validDownKeyCodes = [40, 83];
-  const validRestartKeyCodes = [13, 82];
-
-  const playerSize = 64;
-  const playerOffset = 30;
+  // HOW BIG THE ASTEROID IS, IN PIXELS (LATER SQUARED) [NUMBER]
   const asteroidSize = 50;
 
-  const playerSpeed = 30;
-  const asteroidSpeed = 10;
-  const bgScrollSpeed = 5;
+  // THE TIME TO WAIT BEFORE BEING ABLE TO FIRE ANOTHER SHOT, IN SECONDS [NUMBER]
+  const shotSpawnTimer = 0.1;
+  // HOW MANY SHOTS THE PLAYER CAN HAVE ON-SCREEN AT THE SAME TIME [NUMBER]
+  const maxShots = 10;
+  // HOW FAR THE SHOT SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
   const shotSpeed = 50;
-  const shotCooldownTime = 100;
+
+
+  // VALID KEY-PRESSES TO MOVE THE PLAYER UP, IN KEYCODE [ARRAY OF NUMBERS]
+  // 38 = ARROW UP
+  // 87 = W
+  const validUpKeyCodes = [38, 87];
+  // VALID KEY-PRESSES TO MOVE THE PLAYER DOWN, IN KEYCODE [ARRAY OF NUMBERS]
+  // 40 = ARROW DOWN
+  // 83 = S
+  const validDownKeyCodes = [40, 83];
+  // VALID KEY-PRESSES TO RESTART THE GAME, IN KEYCODE [ARRAY OF NUMBERS]
+  // 13 = ENTER
+  // 82 = R
+  const validRestartKeyCodes = [13, 82];
+  // MORE INFO ON KEYCODES: https://www.toptal.com/developers/keycode/table
+
+  // THE SIZE OF THE PLAYER, IN PIXELS (LATER SQUARED) [NUMBER]
+  const playerSize = 64;
+  // THE DISTANCE THE PLAYER IS PLACED FROM THE LEFT SIDE OF THE SCREEN, IN PIXELS [NUMBER]
+  const playerOffset = 30;
+  // HOW FAR THE PLAYER CAN TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
+  // NOTE THAT THE PLAYER WILL TRAVEL VERTICALLY INSTEAD OF HORIZONTALLY [NUMBER]
+  const playerSpeed = 30;
+
+  // HOW FAR THE BACKGROUND SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
+  const bgScrollSpeed = 5;
+
 
   // Style variables to be able to change styles dynamically
   //
@@ -222,8 +243,9 @@ function App() {
   // playerShoot - Adds a new item to the currentShots array with the values needed for a new shot to be rendered
   //
   // Basic flow:
-  // --> Checks if the player has pressed the button to shoot (spaceIsPressed) and the shooting cooldown is over (shotCooldown)
+  // --> Checks if the player has pressed the button to shoot (spaceIsPressed) and the shooting timer is over (shotTimer)
   // --> Also checks to make sure the player has not already fired too many shots, if either check fails do nothing
+  // --> Resets the shooting timer (setShotTimer)
   // --> Creates a new variable (newShotTop) with the correct spawn-position for the new shot based on player position and size
   // --> Adds a new object to the setCurrentShots array and assigns it the properties:
   //    --> pos based on where to spawn the shot horizontally
@@ -239,11 +261,10 @@ function App() {
       setShotTimer(newTimer);
 
       let newShotTop = playerPos + playerSize * 0.5 - 5;
-      setShotCooldown(shotCooldownTime);
       console.log("shot fired");
       setCurrentShots([
         ...currentShots,
-        { pos: 70, top: newShotTop, id: uuidv4(), width: 40, height: 10 }, //SUGGESTION: Replace pos with playerSize + PlayerOffset
+        { pos: 70, top: newShotTop, id: uuidv4(), width: 40, height: 10 }, //SUGGESTION: Replace pos with playerOffset + playerSize
       ]);
     }
   }
@@ -322,7 +343,6 @@ function App() {
   // --> Set the gameOver boolean to true
   // --> Set the gameStarted boolean to false
   //
-
   function LoseGame() {
     console.log("Game Over");
 
@@ -453,18 +473,7 @@ function App() {
       if (deltaTime > 200) deltaTime = 0.01;
 
       addAsteroid();
-      setShotCooldown((shotCooldown) => shotCooldown - 1 * deltaTime * 1000);
-      // setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed * deltaTime);
-      // setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed * deltaTime);
 
-      // if (tileOnePos < -gameAreaSize.width) {
-      //   setTileOnePos(gameAreaSize.width);
-      // }
-      // if (tileTwoPos < -gameAreaSize.width) {
-      //   setTileTwoPos(gameAreaSize.width);
-      // }
-
-      let hit = false;
       if (currentAsteroids.length >= 1) {
         currentAsteroids.map((asteroid) => {
           asteroid.pos -= asteroidSpeed;
