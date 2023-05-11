@@ -81,6 +81,11 @@ function App() {
   // SUGGESTION: UPDATE THE SHOT COOLDOWN TO WORK THE SAME WAY THE ASTEROIDTIMER WORKS
   const [shotCooldown, setShotCooldown] = useState(0);
 
+  // NEW AND REPLACES SHOTCOOLDOWN
+  // THE TIME WHEN THE NEXT SHOT SHOULD BE SPAWNED IN, REPRESENTED BY A NUMBER IN MILLISECONDS SLIGHTLY LARGER THAN DATE.NOW [NUMBER]
+  // SUGGESTION: ELABORATE ON THIS EXPLANATION
+  const [shotTimer, setShotTimer] = useState(0);
+
   // A BOOLEAN OF WHETHER DOWN IS CURRENTLY BEING PRESSED OR NOT [BOOLEAN]
   const [downIsPressed, setDownIsPressed] = useState(false);
   // A BOOLEAN OF WHETHER UP IS CURRENTLY BEING PRESSED OR NOT [BOOLEAN]
@@ -104,8 +109,10 @@ function App() {
     max: 3,
   };
 
+  const shotSpawnTimer = 0.1;
+
   const maxAsteroids = 10;
-  const maxShots = 20;
+  const maxShots = 10;
   const baseAsteroidScore = 150;
 
   const validUpKeyCodes = [38, 87];
@@ -118,7 +125,7 @@ function App() {
 
   const playerSpeed = 30;
   const asteroidSpeed = 10;
-  const bgScrollSpeed = 50;
+  const bgScrollSpeed = 5;
   const shotSpeed = 50;
   const shotCooldownTime = 100;
 
@@ -225,7 +232,12 @@ function App() {
   //    --> width, height based on how big the shot should be
   //
   function playerShoot() {
-    if (spaceIsPressed && shotCooldown <= 0 && currentShots.length < maxShots) {
+    let now = d3Now();
+  
+    if (spaceIsPressed && currentShots.length < maxShots && shotTimer < now) {
+      let newTimer = now + shotSpawnTimer * 1000;
+      setShotTimer(newTimer);
+
       let newShotTop = playerPos + playerSize * 0.5 - 5;
       setShotCooldown(shotCooldownTime);
       console.log("shot fired");
@@ -406,6 +418,30 @@ function App() {
   ]);
 
   //MOVEMENT AND COLLISION
+
+  // SUGGESTION: RESTRUCTURING: 
+  // REMOVE THE DELTATIME VARIABLE COMPLETELY
+  // 
+  // USEEFFECT SEPERATION:
+  // MOVE THE TILES MOVING TO A SEPERATE USEEFFECT WITH A SEPERATE INTERVAL
+  // 
+  useEffect(() => {
+    let interval = d3Interval(() => {
+      setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed);
+      setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed);
+
+      if (tileOnePos < -gameAreaSize.width) {
+        setTileOnePos(gameAreaSize.width);
+      }
+      if (tileTwoPos < -gameAreaSize.width) {
+        setTileTwoPos(gameAreaSize.width);
+      }
+    }, 10)
+
+    return () => {interval.stop();}
+
+  }, [tileOnePos, tileTwoPos])
+
   useEffect(() => {
     let interval;
     interval = d3Interval(() => {
@@ -418,15 +454,15 @@ function App() {
 
       addAsteroid();
       setShotCooldown((shotCooldown) => shotCooldown - 1 * deltaTime * 1000);
-      setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed * deltaTime);
-      setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed * deltaTime);
+      // setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed * deltaTime);
+      // setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed * deltaTime);
 
-      if (tileOnePos < -gameAreaSize.width) {
-        setTileOnePos(gameAreaSize.width);
-      }
-      if (tileTwoPos < -gameAreaSize.width) {
-        setTileTwoPos(gameAreaSize.width);
-      }
+      // if (tileOnePos < -gameAreaSize.width) {
+      //   setTileOnePos(gameAreaSize.width);
+      // }
+      // if (tileTwoPos < -gameAreaSize.width) {
+      //   setTileTwoPos(gameAreaSize.width);
+      // }
 
       let hit = false;
       if (currentAsteroids.length >= 1) {
@@ -488,8 +524,6 @@ function App() {
       interval.stop();
     };
   }, [
-    tileOnePos,
-    tileTwoPos,
     playerPos,
     currentAsteroids,
     currentShots,
