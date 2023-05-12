@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from "uuid";
 // https://www.npmjs.com/package/d3-timer
 //
 import { now as d3Now, interval as d3Interval } from "d3-timer";
+import { authenticate } from "./helpers";
 
 // Custom Components
 // Asteroid - Simple Component used to display the asteroid flying towards the player
@@ -35,7 +36,9 @@ import { now as d3Now, interval as d3Interval } from "d3-timer";
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
 import Overlay from "./Overlay";
+import BottomBar from "./components/BottomBar";
 import Leaderboard from "./components/Leaderboard";
+
 
 // Custom Hooks
 // useWindowDimensions - Simple hook that returns an object with a width and height property corresponding to the window size in pixels
@@ -97,6 +100,9 @@ function App() {
   const [gameOver, setgameOver] = useState(false);
   // A BOOLEAN OF WHETHER THE GAME HAS STARTED OR NOT [BOOLEAN]
   const [gameStarted, setGameStarted] = useState(false);
+  const [userRegister, setUserRegister] = useState(false);
+  const [userLogin, setUserLogin] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState("");
 
   // SUGGESTION: REMOVE OR ELABORATE ON THIS
   const lastCall = useRef(0);
@@ -335,6 +341,17 @@ function App() {
     setCurrentShots(currentShots.filter((shot) => shot.id !== id));
   }
 
+
+  function getUserName() {
+    const auth = authenticate();
+    if (auth) {
+      return JSON.parse(localStorage.getItem("name"));
+    } else {
+      return "star";
+    }
+  }
+
+
   // LoseGame - Sets the values that indicate the game is over and resets all shots and asteroids
   //
   // Basic flow:
@@ -343,9 +360,10 @@ function App() {
   // --> Set the gameOver boolean to true
   // --> Set the gameStarted boolean to false
   //
+
   function LoseGame() {
     console.log("Game Over");
-
+    setLoggedInUser(getUserName);
     setCurrentAsteroids([]);
     setCurrentShots([]);
     setgameOver(true);
@@ -463,6 +481,7 @@ function App() {
   }, [tileOnePos, tileTwoPos])
 
   useEffect(() => {
+    setLoggedInUser(getUserName);
     let interval;
     interval = d3Interval(() => {
       if (gameOver) return;
@@ -554,10 +573,27 @@ function App() {
           gameStarted={gameStarted}
           gameAreaWidth={gameAreaSize.width}
           gameAreaHeight={gameAreaSize.height}
+          userLogin={userLogin}
+          userRegister={userRegister}
         ></Overlay>
+
         <div style={playerStyle} className="player"></div>
       </div>
-      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} gameOver={gameOver}/>
+      <Leaderboard
+        gameSize={gameAreaSize}
+        currentScore={currentScore}
+        gameOver={gameOver}
+        playerName={loggedInUser}
+      />
+
+      <BottomBar
+        gameAreaSize={gameAreaSize}
+        setUserLogin={setUserLogin}
+        setUserRegister={setUserRegister}
+        userLogin={userLogin}
+        userRegister={userRegister}
+        playerName={loggedInUser}
+      />
     </div>
   );
 }

@@ -1,6 +1,24 @@
-const Overlay = ({gameOver, score, gameStarted}) => {
+
+import ScoreDisplay from "./ScoreDisplay";
+import Register from "./Register";
+import Login from "./Login";
+
+const Overlay = (props) => {
+  //   const overlayStyle = {
+  //     width: `${props.gameAreaWidth}px`,
+  //     height: `${props.gameAreaHeight}px`,
+  //   };
+
+  if (props.userRegister) {
+    return <Register></Register>;
+  } else if (props.userLogin) {
+    return <Login></Login>;
+  } else if (props.gameOver) {
+
+
 
   if (gameOver) {
+
     return (
       <div className="wh-100 flex-center">
         <div className="game-over__container flex-center">
