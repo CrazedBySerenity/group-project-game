@@ -358,6 +358,7 @@ function App() {
     setLoggedInUser(getUserName);
     setCurrentAsteroids([]);
     setCurrentShots([]);
+    setplayerPos(250);
     setgameOver(true);
     setGameStarted(false);
     // SUGGESTION: Remove gameStarted being set to false and instead pass the gameOver variable to the Overlay component
