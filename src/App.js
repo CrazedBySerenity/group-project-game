@@ -112,7 +112,7 @@ function App() {
     max: 3,
   };
   // HOW FAR THE ASTEROID SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
-  const asteroidSpeed = 10;
+  const [asteroidSpeed, setAsteroidSpeed] = useState(10);
   // HOW MANY ASTEROIDS ARE ALLOWED TO BE ON SCREEN AT THE SAME TIME [NUMBER]
   const maxAsteroids = 10;
   // HOW MUCH SCORE THE PLAYER GAINS FOR DESTROYING AN ASTEROID [NUMBER]
@@ -372,12 +372,14 @@ function App() {
       if (validUpKeyCodes.includes(e.keyCode)) {
         setUpIsPressed(true);
         if (!gameOver && !gameStarted) {
+          setAsteroidSpeed(gameAreaSize.width * 0.005);
           setGameStarted(true);
         }
       }
       if (validDownKeyCodes.includes(e.keyCode)) {
         setDownIsPressed(true);
         if (!gameOver && !gameStarted) {
+          setAsteroidSpeed(gameAreaSize.width * 0.005);
           setGameStarted(true);
         }
       }
