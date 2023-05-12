@@ -2,6 +2,7 @@
   "topPlayers": [
     {
       "name": "Player",
+
       "score": 3300,
       "id": 13
     },
@@ -96,6 +97,7 @@
       "username": "asd",
       "password": "asd",
       "id": 14
+
     }
   ]
 }

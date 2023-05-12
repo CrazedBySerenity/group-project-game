@@ -1,3 +1,4 @@
+
 import ScoreDisplay from "./ScoreDisplay";
 import Register from "./Register";
 import Login from "./Login";
@@ -13,19 +14,24 @@ const Overlay = (props) => {
   } else if (props.userLogin) {
     return <Login></Login>;
   } else if (props.gameOver) {
+
+
+
+  if (gameOver) {
+
     return (
       <div className="wh-100 flex-center">
         <div className="game-over__container flex-center">
           <p className="game-over__text">Game over!</p>
           <div>
             <p className="game-over__text">Final Score</p>
-            <p className="game-over__text">{props.score}</p>
+            <p className="game-over__text">{score}</p>
           </div>
           <p className="game-over__text">Press ENTER to Restart...</p>
         </div>
       </div>
     );
-  } else if (!props.gameStarted) {
+  } else if (!gameStarted) {
     return (
       <div className="wh-100 flex-center">
         <div className="game-start__container flex-center">
