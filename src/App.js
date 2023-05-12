@@ -447,6 +447,13 @@ function App() {
     currentShots,
   ]);
 
+  //SEPARATE USE EFFECT FOR TOP AND BOTTOM COLLISION DETECTION
+  useEffect(() => {
+    if (playerPos < 0) setplayerPos(0);
+    else if (playerPos > gameAreaSize.height - playerSize)
+      setplayerPos(gameAreaSize.height - playerSize);
+  }, [playerPos]);
+
   //MOVEMENT AND COLLISION
 
   // SUGGESTION: RESTRUCTURING:

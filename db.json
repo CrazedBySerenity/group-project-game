@@ -2,7 +2,6 @@
   "topPlayers": [
     {
       "name": "Player",
-
       "score": 3300,
       "id": 13
     },
@@ -12,19 +11,19 @@
       "id": 14
     },
     {
-      "name": "asd",
-      "score": 1650,
-      "id": 25
-    },
-    {
-      "name": "DEFAULT",
-      "score": 2100,
-      "id": 28
-    },
-    {
-      "name": "oliver1",
-      "score": 1500,
+      "name": "star",
+      "score": 3000,
       "id": 29
+    },
+    {
+      "name": "star",
+      "score": 2250,
+      "id": 30
+    },
+    {
+      "name": "star",
+      "score": 3750,
+      "id": 31
     }
   ],
   "profiles": [
@@ -97,7 +96,6 @@
       "username": "asd",
       "password": "asd",
       "id": 14
-
     }
   ]
 }
