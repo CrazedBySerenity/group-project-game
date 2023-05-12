@@ -11,19 +11,19 @@
       "id": 14
     },
     {
-      "name": "Buzz Lightyear",
-      "score": 1500,
-      "id": 22
-    },
-    {
-      "name": "DEFAULT",
-      "score": 1500,
-      "id": 24
-    },
-    {
       "name": "asd",
       "score": 1650,
       "id": 25
+    },
+    {
+      "name": "DEFAULT",
+      "score": 2100,
+      "id": 28
+    },
+    {
+      "name": "oliver1",
+      "score": 1500,
+      "id": 29
     }
   ],
   "profiles": [

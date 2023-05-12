@@ -18,7 +18,6 @@ const Leaderboard = ({ gameSize, currentScore, gameOver, playerName }) => {
   const [sortedScores, setSortedScores] = useState([]);
   const [score, setScore] = useState([]);
   const [shouldPostScore, setShouldPostScore] = useState(false);
-  const [scoreName, setScoreName] = useState("DEFAULT");
 
   const fetchLeaderBoard = async () => {
     const data = await axios
@@ -29,8 +28,7 @@ const Leaderboard = ({ gameSize, currentScore, gameOver, playerName }) => {
   };
 
   const saveHighscore = async () => {
-    setScoreName(playerName);
-    const player = { name: scoreName, score: currentScore };
+    const player = { name: playerName, score: currentScore };
 
     let itemToDelete = { id: -1, score: Number.POSITIVE_INFINITY };
     for (let i = 0; i < sortedScores.length; i++) {
