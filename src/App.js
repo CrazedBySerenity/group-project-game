@@ -39,7 +39,6 @@ import Overlay from "./Overlay";
 import BottomBar from "./components/BottomBar";
 import Leaderboard from "./components/Leaderboard";
 
-
 // Custom Hooks
 // useWindowDimensions - Simple hook that returns an object with a width and height property corresponding to the window size in pixels
 // return: {width: Current screen width, height: Current screen height}
@@ -48,7 +47,6 @@ import useWindowDimensions from "./UseWindowDimensions";
 //
 
 function App() {
-
   // VARIABLE DECLARATION GOES HERE:
 
   // OBJECT CONTAINING CURRENT SIZE OF THE WINDOW [OBJECT]
@@ -129,7 +127,6 @@ function App() {
   // HOW FAR THE SHOT SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
   const shotSpeed = 50;
 
-
   // VALID KEY-PRESSES TO MOVE THE PLAYER UP, IN KEYCODE [ARRAY OF NUMBERS]
   // 38 = ARROW UP
   // 87 = W
@@ -154,7 +151,6 @@ function App() {
 
   // HOW FAR THE BACKGROUND SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
   const bgScrollSpeed = 5;
-
 
   // Style variables to be able to change styles dynamically
   //
@@ -186,7 +182,6 @@ function App() {
     width: `${gameAreaSize.width}px`,
     height: `${gameAreaSize.height}px`,
   };
-
 
   // AsteroidRenderer - Returns the Asteroids so they can be rendered
   //
@@ -245,7 +240,6 @@ function App() {
     return visibleShots;
   }
 
-
   // playerShoot - Adds a new item to the currentShots array with the values needed for a new shot to be rendered
   //
   // Basic flow:
@@ -261,7 +255,7 @@ function App() {
   //
   function playerShoot() {
     let now = d3Now();
-  
+
     if (spaceIsPressed && currentShots.length < maxShots && shotTimer < now) {
       let newTimer = now + shotSpawnTimer * 1000;
       setShotTimer(newTimer);
@@ -341,7 +335,6 @@ function App() {
     setCurrentShots(currentShots.filter((shot) => shot.id !== id));
   }
 
-
   function getUserName() {
     const auth = authenticate();
     if (auth) {
@@ -350,7 +343,6 @@ function App() {
       return "star";
     }
   }
-
 
   // LoseGame - Sets the values that indicate the game is over and resets all shots and asteroids
   //
@@ -367,8 +359,8 @@ function App() {
     setCurrentAsteroids([]);
     setCurrentShots([]);
     setgameOver(true);
-    setGameStarted(false); 
-    // SUGGESTION: Remove gameStarted being set to false and instead pass the gameOver variable to the Overlay component 
+    setGameStarted(false);
+    // SUGGESTION: Remove gameStarted being set to false and instead pass the gameOver variable to the Overlay component
     // so that it can check if gameOver is true. All other places where gameStarted is used already has this kind of check
   }
   //COLLECTING PLAYER INPUT
@@ -457,12 +449,12 @@ function App() {
 
   //MOVEMENT AND COLLISION
 
-  // SUGGESTION: RESTRUCTURING: 
+  // SUGGESTION: RESTRUCTURING:
   // REMOVE THE DELTATIME VARIABLE COMPLETELY
-  // 
+  //
   // USEEFFECT SEPERATION:
   // MOVE THE TILES MOVING TO A SEPERATE USEEFFECT WITH A SEPERATE INTERVAL
-  // 
+  //
   useEffect(() => {
     let interval = d3Interval(() => {
       setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed);
@@ -474,11 +466,12 @@ function App() {
       if (tileTwoPos < -gameAreaSize.width) {
         setTileTwoPos(gameAreaSize.width);
       }
-    }, 10)
+    }, 10);
 
-    return () => {interval.stop();}
-
-  }, [tileOnePos, tileTwoPos])
+    return () => {
+      interval.stop();
+    };
+  }, [tileOnePos, tileTwoPos]);
 
   useEffect(() => {
     setLoggedInUser(getUserName);
@@ -551,11 +544,7 @@ function App() {
     return () => {
       interval.stop();
     };
-  }, [
-    playerPos,
-    currentAsteroids,
-    currentShots,
-  ]);
+  }, [playerPos, currentAsteroids, currentShots]);
 
   return (
     <div className="App">
