@@ -255,7 +255,7 @@ function App() {
   //
   function playerShoot() {
     let now = d3Now();
-  
+
     if (spaceIsPressed && currentShots.length < maxShots && shotTimer < now) {
       let newTimer = now + shotSpawnTimer * 1000;
       setShotTimer(newTimer);
@@ -292,7 +292,7 @@ function App() {
         now +
         (Math.random(asteroidSpawnTimer.max - asteroidSpawnTimer.min) +
           asteroidSpawnTimer.min) *
-          1000;
+        1000;
       setAsteroidTimer(newTimer);
       if (currentAsteroids.length < maxAsteroids) {
         let newAsteroidTop = Math.floor(
@@ -349,7 +349,7 @@ function App() {
     setCurrentAsteroids([]);
     setCurrentShots([]);
     setgameOver(true);
-    setGameStarted(false); 
+    setGameStarted(false);
     // SUGGESTION: Remove gameStarted being set to false and instead pass the gameOver variable to the Overlay component 
     // so that it can check if gameOver is true. All other places where gameStarted is used already has this kind of check
   }
@@ -357,7 +357,7 @@ function App() {
   useEffect(() => {
     const handleKeyDown = (e) => {
       console.log(e.keyCode);
-
+      // Function that reacts to down presses buttons. 
       if (validUpKeyCodes.includes(e.keyCode)) {
         setUpIsPressed(true);
         if (!gameOver && !gameStarted) {
@@ -375,6 +375,13 @@ function App() {
       }
     };
 
+    // --> Valid buttons are required for the game to start
+    // Basic flow:
+    // --> ValidUpKeyCodes and validDownKeyCodes are condition checks if the down presses button is valid
+    // --> If the button is valid, 'upIsPressed is set to 'true'
+    // --> GameOver & gameStarted is being controlled to be true, and if so, the code continues running 
+
+
     const handleKeyUp = (e) => {
       console.log(e.keyCode);
 
@@ -382,6 +389,7 @@ function App() {
         setgameOver(false);
         setCurrentScore(0);
         //Do more stuff to restart the game
+        // COMMENT - Do something to this?
       }
 
       if (validUpKeyCodes.includes(e.keyCode)) {
@@ -392,7 +400,7 @@ function App() {
       }
       if (e.keyCode === 32) {
         setSpaceIsPressed(false);
-      }
+      } // What does 32 mean?
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -405,6 +413,10 @@ function App() {
   });
 
   //MOVING PLAYER
+
+  // HandleKeyDown and HandleKeyUp are functions reacting to down pressed and released buttons.
+  // If the player presses up or down, and the game has not been started or aint over, it is 
+  // shown as marked and the game is started. 
   useEffect(() => {
     if (gameOver) return;
     if (!gameStarted) return;
@@ -437,7 +449,17 @@ function App() {
     currentShots,
   ]);
 
+  // This needs to be checked and updated.
+
   //MOVEMENT AND COLLISION
+  // The logic of the game is running by terms
+  // Basic logic:
+  // --> When the dependencies 'downIsPressed,'upIsPressed', 'playerPos', 
+  // playerSpeed', 'spaceIsPressed, 'currentShots' is changed, the code runs.
+  // --> With the useEffect function, the player can move up and down in the game area which is 
+  // set to a maximum with gameAreaSize.height.
+
+
 
   // SUGGESTION: RESTRUCTURING: 
   // REMOVE THE DELTATIME VARIABLE COMPLETELY
@@ -449,7 +471,7 @@ function App() {
     let interval = d3Interval(() => {
       setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed);
       setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed);
-
+      //D3Interval is collected from D3.js library
       if (tileOnePos < -gameAreaSize.width) {
         setTileOnePos(gameAreaSize.width);
       }
@@ -458,9 +480,15 @@ function App() {
       }
     }, 10)
 
-    return () => {interval.stop();}
+
+    // BACKGROUND MOVING
+    // 
+    // Need help with this one
+
+    return () => { interval.stop(); }
 
   }, [tileOnePos, tileTwoPos])
+  // Using tiles makes the background movement easy
 
   useEffect(() => {
     let interval;
@@ -472,7 +500,14 @@ function App() {
       lastCall.current = now;
       if (deltaTime > 200) deltaTime = 0.01;
 
+      // The useEffect function creates a interval function and manages
+      // the logic of the game and updates after how the game is run.
+      // 
+
+      // Needs to be updated
+
       addAsteroid();
+      // New asteroid function
 
       if (currentAsteroids.length >= 1) {
         currentAsteroids.map((asteroid) => {
@@ -491,6 +526,19 @@ function App() {
           ) {
             LoseGame();
           }
+
+          // PLAYER MOVEMENT AND ASTEROIDS
+
+          // Basic logic:
+          // --> Asteroid is being added
+          // --> At least one asteroid in the area is controlled
+          // --> Asteroid position is updated by map-loop with asteroid-pos and asteroidSpeed
+          // --> If the asteroid.pos is less than 200, which is the permitted area,
+          // the asteroid hits playerPos width and game 
+          // ends with 'LoseGame' function
+
+          // check this one
+
           if (currentShots.length >= 1) {
             currentShots.map((shot) => {
               shot.pos += shotSpeed;
@@ -513,6 +561,14 @@ function App() {
               return shot;
             });
           }
+
+          // COLLISION BETWEEN ATEROID AND SHOT
+          // Basic logic:
+          // --> CurrentShots.length <= controls if at least one shot exists in the array
+          // with length 1
+          // The shot is controlled by the 'shot.pos' and 'shotSpeed'
+          // --> If the position passes the gameAreaSize.width, 'removeShot(shot.id)' is
+          // makes the shot dissapear.
 
           return asteroid;
         });
@@ -538,6 +594,15 @@ function App() {
     currentShots,
   ]);
 
+  // SHOT MOVEMENT
+  // Basic logic:
+  // --> 'currentShots.length' array controlled to be at least 1.
+  // --> If shot is at least 1, map-method is run.
+  // '.map()'-loop updates the position by increasing shot.pos
+  // --> If shot.pos is larger than 'gameAreaSize.width', shot is removed from area.
+
+  // 5 milli seconds needs to be explained. 
+
   return (
     <div className="App">
       <div style={gameAreaStyle} className="game-area">
@@ -557,9 +622,11 @@ function App() {
         ></Overlay>
         <div style={playerStyle} className="player"></div>
       </div>
-      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} gameOver={gameOver}/>
+      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} gameOver={gameOver} />
     </div>
   );
 }
+
+// Needs to be explained.
 
 export default App;
