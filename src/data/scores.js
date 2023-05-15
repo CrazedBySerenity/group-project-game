@@ -1,3 +1,5 @@
+//DELETE THIS DOCUMENT
+
 const scoresData = [
   {
     id: 1,

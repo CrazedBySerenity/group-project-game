@@ -1,16 +1,43 @@
+// Import for react components
+// useState - https://react.dev/reference/react/useState
+//
 import { useState } from "react";
+
+// Import axios component
+// axios - https://www.npmjs.com/package/axios
+//
 import axios from "axios";
-import ReusableButton from "./components/ReusableButton";
 
 const Register = () => {
+
+  // THE CURRENTLY TYPED IN USERNAME [STRING]
   const [username, setUsername] = useState("");
+  // THE CURRENTLY TYPED IN PASSWORD [STRING]
   const [password, setPassword] = useState("");
 
+  // checkUsername - Basic function to check if the currently typed in username already exists in the database
+  // Arguments: users [ARRAY OF OBJECTS CONTAINING A username PROPERTY]
+  // Basic flow:
+  // --> Checks if the username variables exists as a property of any of the objects in the given users array
+  // --> Returns the first element that matches
+  // return: user [OBJECT WITH A username PROPERTY]
+  //
   const checkUsername = (users) => {
     const user = users.find((user) => user.username === username);
     if (user) return user;
   };
 
+  // handleSubmit - Function to put the typed in username and password into the json database
+  // Arguments: e [EVENT OBJECT]
+  // Basic flow:
+  // --> Call e.preventDefault to stop the page from refreshing
+  // --> Pull the existing profiles from the database
+  // --> Check if the currently typed in username already exists as a profile in the database
+  // --> Check if the username input is empty
+  // --> Check if the password input is empty
+  // --> If none of the above apply then post the current username and password as a new profile to the database
+  // --> Reset the input for username and password
+  //
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = await axios
@@ -31,6 +58,8 @@ const Register = () => {
     }
     setUsername("");
     setPassword("");
+
+    // SUGGESTION: ACTIVATE THE LOGIN PAGE AFTER A SUCCESSFUL REGISTRATION
   };
 
   return (

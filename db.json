@@ -12,18 +12,18 @@
     },
     {
       "name": "star",
-      "score": 3000,
-      "id": 29
-    },
-    {
-      "name": "star",
-      "score": 2250,
-      "id": 30
-    },
-    {
-      "name": "star",
       "score": 3750,
       "id": 31
+    },
+    {
+      "name": "STORAPA",
+      "score": 5700,
+      "id": 32
+    },
+    {
+      "name": "STORAPA",
+      "score": 5400,
+      "id": 33
     }
   ],
   "profiles": [
@@ -96,6 +96,16 @@
       "username": "asd",
       "password": "asd",
       "id": 14
+    },
+    {
+      "username": "sdwdawda",
+      "password": "dwdafwda",
+      "id": 15
+    },
+    {
+      "username": "STORAPA",
+      "password": "APA",
+      "id": 16
     }
   ]
 }

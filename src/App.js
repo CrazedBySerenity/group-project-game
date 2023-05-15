@@ -28,7 +28,7 @@ import { authenticate } from "./helpers";
 // props: pos, top, height, width
 //
 // Overlay - Simple component containing a UI overlay that displays different visuals depending on the gameOver and gameStarted variables
-// props: gameOver, score, gameStarted
+// props: gameOver, score, gameStarted, userRegister, userLogin
 //
 // Leaderboard - Component that displays and updates a leaderboard containing the top 5 highest scores available in db.json
 // props:  gameSize, currentScore, gameOver
@@ -44,10 +44,8 @@ import Leaderboard from "./components/Leaderboard";
 // return: {width: Current screen width, height: Current screen height}
 //
 import useWindowDimensions from "./UseWindowDimensions";
-//
 
 function App() {
-  // VARIABLE DECLARATION GOES HERE:
 
   // OBJECT CONTAINING CURRENT SIZE OF THE WINDOW [OBJECT]
   let windowSize = useWindowDimensions();
@@ -417,6 +415,37 @@ function App() {
     };
   });
 
+  // GENERAL SUGGESTION FOR RESTRUCTURING:
+  // TRY TO SEPERATE THE USEEFFECTS INTO SEPERATE COMPONENTS
+  // - ONE FOR ACCEPTING INPUTS
+  // - ONE FOR MOVING THE PLAYER
+  // - ONE FOR MOVING SHOTS, ASTEROIDS AND MANAGING COLLISIONS
+  // - ONE FOR MANAGING AND MOVING THE BACKGROUND
+
+  // COMMUNICATE STATES BETWEEN THESE DIFFERENT STATES WITH USECONTEXT
+
+  // WIP
+  // {
+  // USE CONTEXT
+  // WHAT VARIABLES GO WHERE:
+  // ASTEROIDS + SHOOTING COLLISION AND MOVEMENT
+  // COLLISION COMPONENT (WRAPS AROUND THE ASTEROIDS, SHOOTING AND PLAYER MOVEMENT COMPONENTS)
+  //    + currentAsteroids
+  //    + currentShots
+  //    + playerPos
+  // -- ASTEROID MOVEMENT/SPAWNING COMPONENT
+  //    + asteroidTimer
+  // - 
+  // }
+
+
+
+
+  // SUGGESTION: 
+  // UPDATE THE DEPENDANCIES TO downIsPressed, upIsPressed, spaceIsPressed, playerPos
+  // REMOVED DEPENDANCIES: playerSpeed, currentShots
+  //
+
   //MOVING PLAYER
   useEffect(() => {
     if (gameOver) return;
@@ -450,7 +479,7 @@ function App() {
     currentShots,
   ]);
 
-  //SEPARATE USE EFFECT FOR TOP AND BOTTOM COLLISION DETECTION
+  // SEPARATE USE EFFECT FOR TOP AND BOTTOM COLLISION DETECTION
   useEffect(() => {
     if (playerPos < 0) setplayerPos(0);
     else if (playerPos > gameAreaSize.height - playerSize)
@@ -490,6 +519,8 @@ function App() {
       if (gameOver) return;
       if (!gameStarted) return;
       let now = d3Now();
+
+      // SUGGESTION: REMOVE THESE 3 LINES REGARDING DELTATIME AND THE lastCall VARIABLE COMPLETELY
       let deltaTime = (now - lastCall.current) / 1000;
       lastCall.current = now;
       if (deltaTime > 200) deltaTime = 0.01;
