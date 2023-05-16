@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from "uuid";
 // https://www.npmjs.com/package/d3-timer
 //
 import { now as d3Now, interval as d3Interval } from "d3-timer";
+import { authenticate } from "./helpers";
 
 // Custom Components
 // Asteroid - Simple Component used to display the asteroid flying towards the player
@@ -27,7 +28,7 @@ import { now as d3Now, interval as d3Interval } from "d3-timer";
 // props: pos, top, height, width
 //
 // Overlay - Simple component containing a UI overlay that displays different visuals depending on the gameOver and gameStarted variables
-// props: gameOver, score, gameStarted
+// props: gameOver, score, gameStarted, userRegister, userLogin
 //
 // Leaderboard - Component that displays and updates a leaderboard containing the top 5 highest scores available in db.json
 // props:  gameSize, currentScore, gameOver
@@ -35,6 +36,7 @@ import { now as d3Now, interval as d3Interval } from "d3-timer";
 import Asteroid from "./Asteroid";
 import Shot from "./Shot";
 import Overlay from "./Overlay";
+import BottomBar from "./components/BottomBar";
 import Leaderboard from "./components/Leaderboard";
 
 // Custom Hooks
@@ -42,11 +44,8 @@ import Leaderboard from "./components/Leaderboard";
 // return: {width: Current screen width, height: Current screen height}
 //
 import useWindowDimensions from "./UseWindowDimensions";
-//
 
 function App() {
-
-  // VARIABLE DECLARATION GOES HERE:
 
   // OBJECT CONTAINING CURRENT SIZE OF THE WINDOW [OBJECT]
   let windowSize = useWindowDimensions();
@@ -97,6 +96,9 @@ function App() {
   const [gameOver, setgameOver] = useState(false);
   // A BOOLEAN OF WHETHER THE GAME HAS STARTED OR NOT [BOOLEAN]
   const [gameStarted, setGameStarted] = useState(false);
+  const [userRegister, setUserRegister] = useState(false);
+  const [userLogin, setUserLogin] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState("");
 
   // SUGGESTION: REMOVE OR ELABORATE ON THIS
   const lastCall = useRef(0);
@@ -108,7 +110,7 @@ function App() {
     max: 3,
   };
   // HOW FAR THE ASTEROID SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
-  const asteroidSpeed = 10;
+  const [asteroidSpeed, setAsteroidSpeed] = useState(10);
   // HOW MANY ASTEROIDS ARE ALLOWED TO BE ON SCREEN AT THE SAME TIME [NUMBER]
   const maxAsteroids = 10;
   // HOW MUCH SCORE THE PLAYER GAINS FOR DESTROYING AN ASTEROID [NUMBER]
@@ -122,7 +124,6 @@ function App() {
   const maxShots = 10;
   // HOW FAR THE SHOT SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
   const shotSpeed = 50;
-
 
   // VALID KEY-PRESSES TO MOVE THE PLAYER UP, IN KEYCODE [ARRAY OF NUMBERS]
   // 38 = ARROW UP
@@ -148,7 +149,6 @@ function App() {
 
   // HOW FAR THE BACKGROUND SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
   const bgScrollSpeed = 5;
-
 
   // Style variables to be able to change styles dynamically
   //
@@ -180,7 +180,6 @@ function App() {
     width: `${gameAreaSize.width}px`,
     height: `${gameAreaSize.height}px`,
   };
-
 
   // AsteroidRenderer - Returns the Asteroids so they can be rendered
   //
@@ -238,7 +237,6 @@ function App() {
     ));
     return visibleShots;
   }
-
 
   // playerShoot - Adds a new item to the currentShots array with the values needed for a new shot to be rendered
   //
@@ -335,6 +333,15 @@ function App() {
     setCurrentShots(currentShots.filter((shot) => shot.id !== id));
   }
 
+  function getUserName() {
+    const auth = authenticate();
+    if (auth) {
+      return JSON.parse(localStorage.getItem("name"));
+    } else {
+      return "star";
+    }
+  }
+
   // LoseGame - Sets the values that indicate the game is over and resets all shots and asteroids
   //
   // Basic flow:
@@ -343,13 +350,16 @@ function App() {
   // --> Set the gameOver boolean to true
   // --> Set the gameStarted boolean to false
   //
+
   function LoseGame() {
     console.log("Game Over");
-
+    setLoggedInUser(getUserName);
     setCurrentAsteroids([]);
     setCurrentShots([]);
+    setplayerPos(250);
     setgameOver(true);
     setGameStarted(false);
+    
     // SUGGESTION: Remove gameStarted being set to false and instead pass the gameOver variable to the Overlay component 
     // so that it can check if gameOver is true. All other places where gameStarted is used already has this kind of check
   }
@@ -361,12 +371,14 @@ function App() {
       if (validUpKeyCodes.includes(e.keyCode)) {
         setUpIsPressed(true);
         if (!gameOver && !gameStarted) {
+          setAsteroidSpeed(gameAreaSize.width * 0.005);
           setGameStarted(true);
         }
       }
       if (validDownKeyCodes.includes(e.keyCode)) {
         setDownIsPressed(true);
         if (!gameOver && !gameStarted) {
+          setAsteroidSpeed(gameAreaSize.width * 0.005);
           setGameStarted(true);
         }
       }
@@ -412,6 +424,37 @@ function App() {
     };
   });
 
+  // GENERAL SUGGESTION FOR RESTRUCTURING:
+  // TRY TO SEPERATE THE USEEFFECTS INTO SEPERATE COMPONENTS
+  // - ONE FOR ACCEPTING INPUTS
+  // - ONE FOR MOVING THE PLAYER
+  // - ONE FOR MOVING SHOTS, ASTEROIDS AND MANAGING COLLISIONS
+  // - ONE FOR MANAGING AND MOVING THE BACKGROUND
+
+  // COMMUNICATE STATES BETWEEN THESE DIFFERENT STATES WITH USECONTEXT
+
+  // WIP
+  // {
+  // USE CONTEXT
+  // WHAT VARIABLES GO WHERE:
+  // ASTEROIDS + SHOOTING COLLISION AND MOVEMENT
+  // COLLISION COMPONENT (WRAPS AROUND THE ASTEROIDS, SHOOTING AND PLAYER MOVEMENT COMPONENTS)
+  //    + currentAsteroids
+  //    + currentShots
+  //    + playerPos
+  // -- ASTEROID MOVEMENT/SPAWNING COMPONENT
+  //    + asteroidTimer
+  // - 
+  // }
+
+
+
+
+  // SUGGESTION: 
+  // UPDATE THE DEPENDANCIES TO downIsPressed, upIsPressed, spaceIsPressed, playerPos
+  // REMOVED DEPENDANCIES: playerSpeed, currentShots
+  //
+
   //MOVING PLAYER
 
   // HandleKeyDown and HandleKeyUp are functions reacting to down pressed and released buttons.
@@ -448,8 +491,13 @@ function App() {
     spaceIsPressed,
     currentShots,
   ]);
-
-  // This needs to be checked and updated.
+  
+  // SEPARATE USE EFFECT FOR TOP AND BOTTOM COLLISION DETECTION
+  useEffect(() => {
+    if (playerPos < 0) setplayerPos(0);
+    else if (playerPos > gameAreaSize.height - playerSize)
+      setplayerPos(gameAreaSize.height - playerSize);
+  }, [playerPos]);
 
   //MOVEMENT AND COLLISION
   // The logic of the game is running by terms
@@ -461,12 +509,12 @@ function App() {
 
 
 
-  // SUGGESTION: RESTRUCTURING: 
+  // SUGGESTION: RESTRUCTURING:
   // REMOVE THE DELTATIME VARIABLE COMPLETELY
-  // 
+  //
   // USEEFFECT SEPERATION:
   // MOVE THE TILES MOVING TO A SEPERATE USEEFFECT WITH A SEPERATE INTERVAL
-  // 
+  //
   useEffect(() => {
     let interval = d3Interval(() => {
       setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed);
@@ -478,8 +526,7 @@ function App() {
       if (tileTwoPos < -gameAreaSize.width) {
         setTileTwoPos(gameAreaSize.width);
       }
-    }, 10)
-
+    }, 10);
 
     // BACKGROUND MOVING
     // 
@@ -491,11 +538,14 @@ function App() {
   // Using tiles makes the background movement easy
 
   useEffect(() => {
+    setLoggedInUser(getUserName);
     let interval;
     interval = d3Interval(() => {
       if (gameOver) return;
       if (!gameStarted) return;
       let now = d3Now();
+
+      // SUGGESTION: REMOVE THESE 3 LINES REGARDING DELTATIME AND THE lastCall VARIABLE COMPLETELY
       let deltaTime = (now - lastCall.current) / 1000;
       lastCall.current = now;
       if (deltaTime > 200) deltaTime = 0.01;
@@ -588,11 +638,7 @@ function App() {
     return () => {
       interval.stop();
     };
-  }, [
-    playerPos,
-    currentAsteroids,
-    currentShots,
-  ]);
+  }, [playerPos, currentAsteroids, currentShots]);
 
   // SHOT MOVEMENT
   // Basic logic:
@@ -619,10 +665,27 @@ function App() {
           gameStarted={gameStarted}
           gameAreaWidth={gameAreaSize.width}
           gameAreaHeight={gameAreaSize.height}
+          userLogin={userLogin}
+          userRegister={userRegister}
         ></Overlay>
+
         <div style={playerStyle} className="player"></div>
       </div>
-      <Leaderboard gameSize={gameAreaSize} currentScore={currentScore} gameOver={gameOver} />
+      <Leaderboard
+        gameSize={gameAreaSize}
+        currentScore={currentScore}
+        gameOver={gameOver}
+        playerName={loggedInUser}
+      />
+
+      <BottomBar
+        gameAreaSize={gameAreaSize}
+        setUserLogin={setUserLogin}
+        setUserRegister={setUserRegister}
+        userLogin={userLogin}
+        userRegister={userRegister}
+        playerName={loggedInUser}
+      />
     </div>
   );
 }

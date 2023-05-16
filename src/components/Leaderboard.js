@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { authenticate } from "../helpers";
 
 const leaderBoardStyle = {
   backgroundColor: "black",
-  margin: "40px",
+  margin: "15px",
   maxWidth: "350px",
   //   width: "100%",
 };
@@ -13,44 +14,46 @@ const leaderBoardLine = {
   width: "5px",
 };
 
-const Leaderboard = ({ gameSize, currentScore, gameOver }) => {
-  const [sortedScores, setSortedScores] = useState([])
+const Leaderboard = ({ gameSize, currentScore, gameOver, playerName }) => {
+  const [sortedScores, setSortedScores] = useState([]);
   const [score, setScore] = useState([]);
-  const [shouldPostScore, setShouldPostScore] = useState(false); 
+  const [shouldPostScore, setShouldPostScore] = useState(false);
 
   const fetchLeaderBoard = async () => {
     const data = await axios
-    .get("http://localhost:6001/topPlayers")
-    .then(console.log("Updated leaderboard"));
+      .get("http://localhost:6001/topPlayers/")
+      .then(console.log("Updated leaderboard"));
 
     setScore(data.data);
-  }
+  };
 
-  const saveHighscore = async() => {
-    const player = {name: "Player", score: currentScore};
+  const saveHighscore = async () => {
+    const player = { name: playerName, score: currentScore };
 
-    let itemToDelete = {id: -1, score: Number.POSITIVE_INFINITY};
-    for(let i = 0; i < sortedScores.length; i++){
+    let itemToDelete = { id: -1, score: Number.POSITIVE_INFINITY };
+    for (let i = 0; i < sortedScores.length; i++) {
       let valueToCheck = sortedScores[i].score;
-      if(valueToCheck < itemToDelete.score){
+      if (valueToCheck < itemToDelete.score) {
         itemToDelete.score = valueToCheck;
         itemToDelete.id = sortedScores[i].id;
       }
     }
 
     console.log(itemToDelete.id);
-    
-    if(itemToDelete.id > -1 && sortedScores.length >= 5){
+
+    if (itemToDelete.id > -1 && sortedScores.length >= 5) {
       axios.delete(`http://localhost:6001/topPlayers/${itemToDelete.id}`);
       console.log("Removed an entry from the leaderboard");
     }
 
-    axios.post("http://localhost:6001/topPlayers", player).then(console.log("Player added to highscores"));
+    axios
+      .post("http://localhost:6001/topPlayers", player)
+      .then(console.log("Player added to highscores"));
     setShouldPostScore(false);
-  }
+  };
 
   useEffect(() => {
-    if(shouldPostScore){
+    if (shouldPostScore) {
       saveHighscore();
     }
 
@@ -60,15 +63,15 @@ const Leaderboard = ({ gameSize, currentScore, gameOver }) => {
   useEffect(() => {
     let scoreList = score;
     setSortedScores(scoreList.sort((s1, s2) => s2.score - s1.score));
-  }, [score])
+  }, [score]);
 
   useEffect(() => {
-    if(sortedScores.length > 0){
-      if(currentScore > sortedScores[sortedScores.length - 1].score){
+    if (sortedScores.length > 0) {
+      if (currentScore > sortedScores[sortedScores.length - 1].score) {
         setShouldPostScore(true);
       }
     }
-  }, [currentScore])
+  }, [currentScore]);
 
   return (
     <div
@@ -82,13 +85,17 @@ const Leaderboard = ({ gameSize, currentScore, gameOver }) => {
       <div className="leaderboard__subcontainer">
         <div style={leaderBoardStyle}>
           {sortedScores.map((item) => (
-            <div key={item.id}>{item.name}</div>
+            <div className="leaderboard__item" key={item.id}>
+              {item.name}
+            </div>
           ))}
         </div>
         <div style={leaderBoardLine}></div>
         <div style={leaderBoardStyle}>
           {sortedScores.map((item) => (
-            <div key={item.id}>{item.score}</div>
+            <div className="leaderboard__item" key={item.id}>
+              {item.score}
+            </div>
           ))}
         </div>
       </div>
