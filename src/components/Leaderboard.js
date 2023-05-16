@@ -4,7 +4,7 @@ import { authenticate } from "../helpers";
 
 const leaderBoardStyle = {
   backgroundColor: "black",
-  margin: "40px",
+  margin: "15px",
   maxWidth: "350px",
   //   width: "100%",
 };
@@ -85,13 +85,17 @@ const Leaderboard = ({ gameSize, currentScore, gameOver, playerName }) => {
       <div className="leaderboard__subcontainer">
         <div style={leaderBoardStyle}>
           {sortedScores.map((item) => (
-            <div key={item.id}>{item.name}</div>
+            <div className="leaderboard__item" key={item.id}>
+              {item.name}
+            </div>
           ))}
         </div>
         <div style={leaderBoardLine}></div>
         <div style={leaderBoardStyle}>
           {sortedScores.map((item) => (
-            <div key={item.id}>{item.score}</div>
+            <div className="leaderboard__item" key={item.id}>
+              {item.score}
+            </div>
           ))}
         </div>
       </div>

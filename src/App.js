@@ -28,7 +28,7 @@ import { authenticate } from "./helpers";
 // props: pos, top, height, width
 //
 // Overlay - Simple component containing a UI overlay that displays different visuals depending on the gameOver and gameStarted variables
-// props: gameOver, score, gameStarted
+// props: gameOver, score, gameStarted, userRegister, userLogin
 //
 // Leaderboard - Component that displays and updates a leaderboard containing the top 5 highest scores available in db.json
 // props:  gameSize, currentScore, gameOver
@@ -44,10 +44,8 @@ import Leaderboard from "./components/Leaderboard";
 // return: {width: Current screen width, height: Current screen height}
 //
 import useWindowDimensions from "./UseWindowDimensions";
-//
 
 function App() {
-  // VARIABLE DECLARATION GOES HERE:
 
   // OBJECT CONTAINING CURRENT SIZE OF THE WINDOW [OBJECT]
   let windowSize = useWindowDimensions();
@@ -112,7 +110,7 @@ function App() {
     max: 3,
   };
   // HOW FAR THE ASTEROID SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
-  const asteroidSpeed = 10;
+  const [asteroidSpeed, setAsteroidSpeed] = useState(10);
   // HOW MANY ASTEROIDS ARE ALLOWED TO BE ON SCREEN AT THE SAME TIME [NUMBER]
   const maxAsteroids = 10;
   // HOW MUCH SCORE THE PLAYER GAINS FOR DESTROYING AN ASTEROID [NUMBER]
@@ -292,7 +290,7 @@ function App() {
         now +
         (Math.random(asteroidSpawnTimer.max - asteroidSpawnTimer.min) +
           asteroidSpawnTimer.min) *
-          1000;
+        1000;
       setAsteroidTimer(newTimer);
       if (currentAsteroids.length < maxAsteroids) {
         let newAsteroidTop = Math.floor(
@@ -358,25 +356,29 @@ function App() {
     setLoggedInUser(getUserName);
     setCurrentAsteroids([]);
     setCurrentShots([]);
+    setplayerPos(250);
     setgameOver(true);
     setGameStarted(false);
-    // SUGGESTION: Remove gameStarted being set to false and instead pass the gameOver variable to the Overlay component
+    
+    // SUGGESTION: Remove gameStarted being set to false and instead pass the gameOver variable to the Overlay component 
     // so that it can check if gameOver is true. All other places where gameStarted is used already has this kind of check
   }
   //COLLECTING PLAYER INPUT
   useEffect(() => {
     const handleKeyDown = (e) => {
       console.log(e.keyCode);
-
+      // Function that reacts to down presses buttons. 
       if (validUpKeyCodes.includes(e.keyCode)) {
         setUpIsPressed(true);
         if (!gameOver && !gameStarted) {
+          setAsteroidSpeed(gameAreaSize.width * 0.005);
           setGameStarted(true);
         }
       }
       if (validDownKeyCodes.includes(e.keyCode)) {
         setDownIsPressed(true);
         if (!gameOver && !gameStarted) {
+          setAsteroidSpeed(gameAreaSize.width * 0.005);
           setGameStarted(true);
         }
       }
@@ -385,6 +387,13 @@ function App() {
       }
     };
 
+    // --> Valid buttons are required for the game to start
+    // Basic flow:
+    // --> ValidUpKeyCodes and validDownKeyCodes are condition checks if the down presses button is valid
+    // --> If the button is valid, 'upIsPressed is set to 'true'
+    // --> GameOver & gameStarted is being controlled to be true, and if so, the code continues running 
+
+
     const handleKeyUp = (e) => {
       console.log(e.keyCode);
 
@@ -392,6 +401,7 @@ function App() {
         setgameOver(false);
         setCurrentScore(0);
         //Do more stuff to restart the game
+        // COMMENT - Do something to this?
       }
 
       if (validUpKeyCodes.includes(e.keyCode)) {
@@ -402,7 +412,7 @@ function App() {
       }
       if (e.keyCode === 32) {
         setSpaceIsPressed(false);
-      }
+      } // What does 32 mean?
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -414,7 +424,42 @@ function App() {
     };
   });
 
+  // GENERAL SUGGESTION FOR RESTRUCTURING:
+  // TRY TO SEPERATE THE USEEFFECTS INTO SEPERATE COMPONENTS
+  // - ONE FOR ACCEPTING INPUTS
+  // - ONE FOR MOVING THE PLAYER
+  // - ONE FOR MOVING SHOTS, ASTEROIDS AND MANAGING COLLISIONS
+  // - ONE FOR MANAGING AND MOVING THE BACKGROUND
+
+  // COMMUNICATE STATES BETWEEN THESE DIFFERENT STATES WITH USECONTEXT
+
+  // WIP
+  // {
+  // USE CONTEXT
+  // WHAT VARIABLES GO WHERE:
+  // ASTEROIDS + SHOOTING COLLISION AND MOVEMENT
+  // COLLISION COMPONENT (WRAPS AROUND THE ASTEROIDS, SHOOTING AND PLAYER MOVEMENT COMPONENTS)
+  //    + currentAsteroids
+  //    + currentShots
+  //    + playerPos
+  // -- ASTEROID MOVEMENT/SPAWNING COMPONENT
+  //    + asteroidTimer
+  // - 
+  // }
+
+
+
+
+  // SUGGESTION: 
+  // UPDATE THE DEPENDANCIES TO downIsPressed, upIsPressed, spaceIsPressed, playerPos
+  // REMOVED DEPENDANCIES: playerSpeed, currentShots
+  //
+
   //MOVING PLAYER
+
+  // HandleKeyDown and HandleKeyUp are functions reacting to down pressed and released buttons.
+  // If the player presses up or down, and the game has not been started or aint over, it is 
+  // shown as marked and the game is started. 
   useEffect(() => {
     if (gameOver) return;
     if (!gameStarted) return;
@@ -446,8 +491,23 @@ function App() {
     spaceIsPressed,
     currentShots,
   ]);
+  
+  // SEPARATE USE EFFECT FOR TOP AND BOTTOM COLLISION DETECTION
+  useEffect(() => {
+    if (playerPos < 0) setplayerPos(0);
+    else if (playerPos > gameAreaSize.height - playerSize)
+      setplayerPos(gameAreaSize.height - playerSize);
+  }, [playerPos]);
 
   //MOVEMENT AND COLLISION
+  // The logic of the game is running by terms
+  // Basic logic:
+  // --> When the dependencies 'downIsPressed,'upIsPressed', 'playerPos', 
+  // playerSpeed', 'spaceIsPressed, 'currentShots' is changed, the code runs.
+  // --> With the useEffect function, the player can move up and down in the game area which is 
+  // set to a maximum with gameAreaSize.height.
+
+
 
   // SUGGESTION: RESTRUCTURING:
   // REMOVE THE DELTATIME VARIABLE COMPLETELY
@@ -459,7 +519,7 @@ function App() {
     let interval = d3Interval(() => {
       setTileOnePos((tileOnePos) => tileOnePos - bgScrollSpeed);
       setTileTwoPos((tileTwoPos) => tileTwoPos - bgScrollSpeed);
-
+      //D3Interval is collected from D3.js library
       if (tileOnePos < -gameAreaSize.width) {
         setTileOnePos(gameAreaSize.width);
       }
@@ -468,10 +528,14 @@ function App() {
       }
     }, 10);
 
-    return () => {
-      interval.stop();
-    };
-  }, [tileOnePos, tileTwoPos]);
+    // BACKGROUND MOVING
+    // 
+    // Need help with this one
+
+    return () => { interval.stop(); }
+
+  }, [tileOnePos, tileTwoPos])
+  // Using tiles makes the background movement easy
 
   useEffect(() => {
     setLoggedInUser(getUserName);
@@ -480,11 +544,20 @@ function App() {
       if (gameOver) return;
       if (!gameStarted) return;
       let now = d3Now();
+
+      // SUGGESTION: REMOVE THESE 3 LINES REGARDING DELTATIME AND THE lastCall VARIABLE COMPLETELY
       let deltaTime = (now - lastCall.current) / 1000;
       lastCall.current = now;
       if (deltaTime > 200) deltaTime = 0.01;
 
+      // The useEffect function creates a interval function and manages
+      // the logic of the game and updates after how the game is run.
+      // 
+
+      // Needs to be updated
+
       addAsteroid();
+      // New asteroid function
 
       if (currentAsteroids.length >= 1) {
         currentAsteroids.map((asteroid) => {
@@ -503,6 +576,19 @@ function App() {
           ) {
             LoseGame();
           }
+
+          // PLAYER MOVEMENT AND ASTEROIDS
+
+          // Basic logic:
+          // --> Asteroid is being added
+          // --> At least one asteroid in the area is controlled
+          // --> Asteroid position is updated by map-loop with asteroid-pos and asteroidSpeed
+          // --> If the asteroid.pos is less than 200, which is the permitted area,
+          // the asteroid hits playerPos width and game 
+          // ends with 'LoseGame' function
+
+          // check this one
+
           if (currentShots.length >= 1) {
             currentShots.map((shot) => {
               shot.pos += shotSpeed;
@@ -526,6 +612,14 @@ function App() {
             });
           }
 
+          // COLLISION BETWEEN ATEROID AND SHOT
+          // Basic logic:
+          // --> CurrentShots.length <= controls if at least one shot exists in the array
+          // with length 1
+          // The shot is controlled by the 'shot.pos' and 'shotSpeed'
+          // --> If the position passes the gameAreaSize.width, 'removeShot(shot.id)' is
+          // makes the shot dissapear.
+
           return asteroid;
         });
       } else if (currentShots.length >= 1) {
@@ -545,6 +639,15 @@ function App() {
       interval.stop();
     };
   }, [playerPos, currentAsteroids, currentShots]);
+
+  // SHOT MOVEMENT
+  // Basic logic:
+  // --> 'currentShots.length' array controlled to be at least 1.
+  // --> If shot is at least 1, map-method is run.
+  // '.map()'-loop updates the position by increasing shot.pos
+  // --> If shot.pos is larger than 'gameAreaSize.width', shot is removed from area.
+
+  // 5 milli seconds needs to be explained. 
 
   return (
     <div className="App">
@@ -586,5 +689,7 @@ function App() {
     </div>
   );
 }
+
+// Needs to be explained.
 
 export default App;
