@@ -3,7 +3,6 @@
 // useState - https://react.dev/reference/react/useState
 // useRef - https://react.dev/reference/react/useRef
 //
-import "./App.css"; // SUGGESTION: This can probably be deleted
 import { useEffect, useState, useRef } from "react";
 
 // Uuidv4 is used for creating unique ids for the shot and asteroid objects
@@ -18,7 +17,10 @@ import { v4 as uuidv4 } from "uuid";
 // https://www.npmjs.com/package/d3-timer
 //
 import { now as d3Now, interval as d3Interval } from "d3-timer";
-import { authenticate } from "./helpers";
+
+// Authenticate is used to grab the current username if there is one
+//
+import { authenticate } from "./helpers/Authenticate";
 
 // Custom Components
 // Asteroid - Simple Component used to display the asteroid flying towards the player
@@ -33,9 +35,9 @@ import { authenticate } from "./helpers";
 // Leaderboard - Component that displays and updates a leaderboard containing the top 5 highest scores available in db.json
 // props:  gameSize, currentScore, gameOver
 //
-import Asteroid from "./Asteroid";
-import Shot from "./Shot";
-import Overlay from "./Overlay";
+import Asteroid from "./components/Asteroid";
+import Shot from "./components/Shot";
+import Overlay from "./components/Overlay";
 import BottomBar from "./components/BottomBar";
 import Leaderboard from "./components/Leaderboard";
 
@@ -43,7 +45,7 @@ import Leaderboard from "./components/Leaderboard";
 // useWindowDimensions - Simple hook that returns an object with a width and height property corresponding to the window size in pixels
 // return: {width: Current screen width, height: Current screen height}
 //
-import useWindowDimensions from "./UseWindowDimensions";
+import useWindowDimensions from "./hooks/UseWindowDimensions";
 
 function App() {
 

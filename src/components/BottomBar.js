@@ -1,5 +1,5 @@
 import ReusableButton from "./ReusableButton";
-import { authenticate } from "../helpers";
+import { authenticate } from "../helpers/Authenticate";
 const BottomBar = ({
   gameAreaSize,
   setUserLogin,

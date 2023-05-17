@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { authenticate } from "../helpers";
 
 const leaderBoardStyle = {
   backgroundColor: "black",
