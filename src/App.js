@@ -8,6 +8,8 @@ import { useEffect, useState, createContext } from "react";
 // Authenticate is used to grab the current username if there is one
 import { authenticate } from "./helpers/Authenticate";
 
+import { SettingsContext, GameObjectsContext, GameStateContext, InputContext } from "./helpers/context";
+
 // Custom Components
 // Asteroid - Simple Component used to display the asteroid flying towards the player
 // props: pos, top, size
@@ -26,7 +28,7 @@ import Shot from "./components/Shot";
 import Overlay from "./components/Overlay";
 import BottomBar from "./components/BottomBar";
 import Leaderboard from "./components/Leaderboard";
-import {BackGroundMovement} from './core-components';
+import BackgroundMovement from './core-components/BackgroundMovement';
 
 // Custom Hooks
 // useWindowDimensions - Simple hook that returns an object with a width and height property corresponding to the window size in pixels
@@ -133,11 +135,6 @@ function App() {
   const playerSpeed = 30;
   // HOW FAR THE BACKGROUND SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
   const bgScrollSpeed = 5;
-
-  const SettingsContext = createContext();
-  const InputContext = createContext();
-  const GameStateContext = createContext();
-  const GameObjectsContext = createContext();
 
   // Style variables to be able to change styles dynamically
   //
@@ -260,7 +257,7 @@ function App() {
           playerSize: playerSize, 
           playerOffset: playerOffset
           }}>
-
+          <BackgroundMovement></BackgroundMovement>
           <GameStateContext.Provider value={{
             loggedInUser: loggedInUser,
             userLogin: userLogin,
@@ -283,7 +280,7 @@ function App() {
                 currentAsteroids: currentAsteroids,
                 currentShots: currentShots,
               }}>
-                  <BackGroundMovement></BackGroundMovement>
+
                 </GameObjectsContext.Provider>
               </InputContext.Provider>
           </GameStateContext.Provider>

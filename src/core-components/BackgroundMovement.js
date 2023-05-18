@@ -1,23 +1,26 @@
 import {useState, useEffect, useContext} from 'react';
+import { SettingsContext } from '../helpers/context';
 
 // D3 is used as an alternative to the setinterval and date.now functions to slightly improve performance
 // More info:
 // https://www.npmjs.com/package/d3-timer
 //
-import { now as d3Now, interval as d3Interval } from "d3-timer";
+import {interval as d3Interval } from "d3-timer";
 
 const BackgroundMovement = () => {
-
-  // THE POSITION OF THE FIRST BACKGROUND TILE (FIRST AND SECOND HAS NO REAL IMPLICATION SINCE THEY SWAP AROUND) [NUMBER]
-  const [tileOnePos, setTileOnePos] = useState(0);
-  // THE POSTION OF THE SECOND BACKGROUND TILE (FIRST AND SECOND HAS NO REAL IMPLICATION SINCE THEY SWAP AROUND) [NUMBER]
-  const [tileTwoPos, setTileTwoPos] = useState(gameAreaSize.width);
 
   const settings = useContext(SettingsContext);
 
   const bgScrollSpeed = settings.bgScrollSpeed;
 
   const gameAreaSize = settings.gameAreaSize;
+
+  // THE POSITION OF THE FIRST BACKGROUND TILE (FIRST AND SECOND HAS NO REAL IMPLICATION SINCE THEY SWAP AROUND) [NUMBER]
+  const [tileOnePos, setTileOnePos] = useState(0);
+  // THE POSTION OF THE SECOND BACKGROUND TILE (FIRST AND SECOND HAS NO REAL IMPLICATION SINCE THEY SWAP AROUND) [NUMBER]
+  const [tileTwoPos, setTileTwoPos] = useState(gameAreaSize.width);
+
+
 
   const tileOneStyle = {
     left: `${tileOnePos}px`,
@@ -58,3 +61,4 @@ const BackgroundMovement = () => {
   // Using tiles makes the background movement easy
 }
 
+export default BackgroundMovement;

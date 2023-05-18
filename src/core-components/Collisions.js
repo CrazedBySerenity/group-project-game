@@ -6,7 +6,7 @@ import {useState, useEffect, useContext} from 'react';
 //
 import { now as d3Now, interval as d3Interval } from "d3-timer";
 
-const Collision = () => {
+const Collisions = () => {
 // removeAsteroid - Filters the currentAsteroids array and returns all items except the one with the given id
   // parameters: id (string created from uuidv4)
   //
@@ -119,3 +119,5 @@ const Collision = () => {
     };
   }, [playerPos, currentAsteroids, currentShots]);
 }
+
+export default Collisions;
