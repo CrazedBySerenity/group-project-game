@@ -5,6 +5,7 @@ import {useState, useEffect, useContext} from 'react';
 // https://www.npmjs.com/package/d3-timer
 //
 import { now as d3Now, interval as d3Interval } from "d3-timer";
+import Settings from '../helpers/Settings';
 
 // Uuidv4 is used for creating unique ids for the shot and asteroid objects
 // The ids created by the uuidv4 function are strings and look roughly like 'b1c4a89e-4905-5e3c-b57f-dc92627d011e'
@@ -12,8 +13,28 @@ import { now as d3Now, interval as d3Interval } from "d3-timer";
 // https://www.npmjs.com/package/uuid
 //
 import { v4 as uuidv4 } from "uuid";
+import { GameObjectsContext, GameStateContext } from '../helpers/context';
+import Asteroid from '../components/Asteroid';
 
 const AsteroidManager = () => {
+
+  // THE TIME WHEN THE NEXT ASTEROID SHOULD BE SPAWNED IN, REPRESENTED BY A NUMBER IN MILLISECONDS SLIGHTLY LARGER THAN DATE.NOW [NUMBER]
+  // The default value indicates the amount of milliseconds before the first asteroid spawns
+  // SUGGESTION: ELABORATE ON THIS EXPLANATION
+  const [asteroidTimer, setAsteroidTimer] = useState(d3Now() + 4000);
+
+  const gameObjects = useContext(GameObjectsContext);
+  const gameState = useContext(GameStateContext);
+
+  const gameAreaSize = gameState.gameAreaSize;
+  const settings = Settings();
+
+  const asteroidSize = Settings.asteroidSize;
+  // The properties settings.asteroidSpawnTimer.min and .max can only be accessed by using settings.min and .max, not sure why
+  const asteroidSpawnTimer = {min: settings.asteroidSpawnTimer.min, max: settings.asteroidSpawnTimer.max};
+  const maxAsteroids = settings.maxAsteroids;
+  
+
   // addAsteroid - Similar to the playerShoot function except it also handles a timer,
   // The function adds a new item to the currentAsteroids array if the previous timer is over,
   // It then gives it a random top-position within the bounds of the game-area
@@ -31,15 +52,17 @@ const AsteroidManager = () => {
   //
   function addAsteroid() {
     let now = d3Now();
+    console.log(asteroidTimer)
     //Check timer and set timer
     if (asteroidTimer < now) {
+      console.log('hey');
       let newTimer =
         now +
         (Math.random(asteroidSpawnTimer.max - asteroidSpawnTimer.min) +
           asteroidSpawnTimer.min) *
         1000;
       setAsteroidTimer(newTimer);
-      if (currentAsteroids.length < maxAsteroids) {
+      if (gameObjects.currentAsteroids.length < maxAsteroids) {
         let newAsteroidTop = Math.floor(
           Math.random() * (gameAreaSize.height - asteroidSize)
         );
@@ -47,8 +70,8 @@ const AsteroidManager = () => {
           newAsteroidTop = asteroidSize;
         }
 
-        setCurrentAsteroids([
-          ...currentAsteroids,
+        gameObjects.setCurrentAsteroids([
+          ...gameObjects.currentAsteroids,
           {
             pos: gameAreaSize.width,
             top: newAsteroidTop,
@@ -60,10 +83,44 @@ const AsteroidManager = () => {
   }
 
   useEffect(() => {
-    addAsteroid();
+    let interval;
+    interval = d3Interval(() => {
+      let now = d3Now();
+      console.log(asteroidTimer);
+      //Check timer and set timer
+      if (asteroidTimer < now) {
+        let newTimer =
+          now +
+          (Math.random(asteroidSpawnTimer.max - asteroidSpawnTimer.min) +
+            asteroidSpawnTimer.min) *
+          1000;
+        setAsteroidTimer(newTimer);
+        if (gameObjects.currentAsteroids.length < maxAsteroids) {
+          let newAsteroidTop = Math.floor(
+            Math.random() * (gameAreaSize.height - asteroidSize)
+          );
+          if (newAsteroidTop < asteroidSize) {
+            newAsteroidTop = asteroidSize;
+          }
+  
+          gameObjects.setCurrentAsteroids([
+            ...gameObjects.currentAsteroids,
+            {
+              pos: gameAreaSize.width,
+              top: newAsteroidTop,
+              id: uuidv4(),
+            },
+          ]);
+        }
+      }
+    }, 60);
+
+    return () => {
+      interval.stop();
+    };
   })
 
-    // AsteroidRenderer - Returns the Asteroids so they can be rendered
+  // AsteroidRenderer - Returns the Asteroids so they can be rendered
   //
   // Basic flow:
   // --> Invoke renderAsteroids (returns Asteroid components)
@@ -90,7 +147,7 @@ const AsteroidManager = () => {
   // --> return the visibleAsteroids array (now containing zero or more Asteroid components with different values)
   //
   function renderAsteroids() {
-    let visibleAsteroids = currentAsteroids.map((asteroid) => (
+    let visibleAsteroids = gameObjects.currentAsteroids.map((asteroid) => (
       <Asteroid
         key={asteroid.id}
         pos={asteroid.pos}
@@ -105,3 +162,5 @@ const AsteroidManager = () => {
     <AsteroidRenderer />
   )
 }
+
+export default AsteroidManager;

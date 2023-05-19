@@ -8,7 +8,13 @@ import { useEffect, useState, createContext } from "react";
 // Authenticate is used to grab the current username if there is one
 import { authenticate } from "./helpers/Authenticate";
 
-import { SettingsContext, GameObjectsContext, GameStateContext, InputContext } from "./helpers/context";
+import { GameObjectsContext, GameStateContext, InputContext } from "./helpers/context";
+
+// Custom Hooks
+// useWindowDimensions - Simple hook that returns an object with a width and height property corresponding to the window size in pixels
+// return: {width: Current screen width, height: Current screen height}
+//
+import useWindowDimensions from "./hooks/UseWindowDimensions";
 
 // Custom Components
 // Asteroid - Simple Component used to display the asteroid flying towards the player
@@ -29,12 +35,10 @@ import Overlay from "./components/Overlay";
 import BottomBar from "./components/BottomBar";
 import Leaderboard from "./components/Leaderboard";
 import BackgroundMovement from './core-components/BackgroundMovement';
+import AsteroidManager from "./core-components/AsteroidManager";
+import PlayerMovement from "./core-components/PlayerMovement";
+import Settings from "./helpers/Settings";
 
-// Custom Hooks
-// useWindowDimensions - Simple hook that returns an object with a width and height property corresponding to the window size in pixels
-// return: {width: Current screen width, height: Current screen height}
-//
-import useWindowDimensions from "./hooks/UseWindowDimensions";
 
 function App() {
 
@@ -47,17 +51,17 @@ function App() {
     height: windowSize.height < 500 ? windowSize.height : 500,
   };
 
+  const settings = Settings();
+
   // THE PLAYERS CURRENT POSITION (VERTICAL) [NUMBER]
-  const [playerPos, setplayerPos] = useState(250);
+  const [playerPos, setPlayerPos] = useState(250);
 
   // THE ARRAY CONTAINING THE CURRENT ASTEROIDS ON THE FIELD [ARRAY OF OBJECTS]
   // ASTEROIDS ARE REPRESENTED WITH OBJECTS AND IT'S RELEVANT VALUES WITH PROPERTIES
   //
   // STRUCTURE EXAMPLE: [{pos, top, id}, {pos, top, id}, {pos, top, id}, {pos, top, id}]
   const [currentAsteroids, setCurrentAsteroids] = useState([]);
-  // THE TIME WHEN THE NEXT ASTEROID SHOULD BE SPAWNED IN, REPRESENTED BY A NUMBER IN MILLISECONDS SLIGHTLY LARGER THAN DATE.NOW [NUMBER]
-  // SUGGESTION: ELABORATE ON THIS EXPLANATION
-  const [asteroidTimer, setAsteroidTimer] = useState(0);
+
   // THE ARRAY CONTAINING THE CURRENT SHOTS ON THE FIELD [ARRAY OF OBJECTS]
   // SHOTS ARE REPRESENTED WITH OBJECTS AND IT'S RELEVANT VALUES WITH PROPERTIES
   //
@@ -88,6 +92,11 @@ function App() {
   const [loggedInUser, setLoggedInUser] = useState("");
 
 
+  const [playerShoot, setPlayerShoot] = useState(() => {console.log("no shooting function assigned")});
+  const shooting = {playerShoot, setPlayerShoot};
+  function shootTest () {
+    console.log('success');
+  }
 
   // THE MINIMUM AND MAXIMUM TIME TO WAIT BEFORE SPAWNING AN ASTEROID, IN SECONDS [OBJECT]
   // LATER ASSIGNED RANDOMLY BETWEEN THESE NUMBERS
@@ -181,13 +190,77 @@ function App() {
     setLoggedInUser(getUserName);
     setCurrentAsteroids([]);
     setCurrentShots([]);
-    setplayerPos(250);
+    setPlayerPos(250);
     setgameOver(true);
     setGameStarted(false);
     
     // SUGGESTION: Remove gameStarted being set to false and instead pass the gameOver variable to the Overlay component 
     // so that it can check if gameOver is true. All other places where gameStarted is used already has this kind of check
   }
+
+  //COLLECTING PLAYER INPUT
+  // HandleKeyDown and HandleKeyUp are functions called when a key is pressed or released
+  // If the player presses up or down, and the game has not been started or aint over, it is 
+  // shown as marked and the game is started. 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+        console.log(e.keyCode);
+        // Function that reacts to down presses buttons. 
+        if (validUpKeyCodes.includes(e.keyCode)) {
+        setUpIsPressed(true);
+        if (!gameOver && !gameStarted) {
+            setAsteroidSpeed(gameAreaSize.width * 0.005);
+            setGameStarted(true);
+        }
+        }
+        if (validDownKeyCodes.includes(e.keyCode)) {
+        setDownIsPressed(true);
+        if (!gameOver && !gameStarted) {
+            setAsteroidSpeed(gameAreaSize.width * 0.005);
+            setGameStarted(true);
+        }
+        }
+        if (e.keyCode === 32) {
+        setSpaceIsPressed(true);
+        }
+    };
+
+    // --> Valid buttons are required for the game to start
+    // Basic flow:
+    // --> ValidUpKeyCodes and validDownKeyCodes are condition checks if the down presses button is valid
+    // --> If the button is valid, 'upIsPressed is set to 'true'
+    // --> GameOver & gameStarted is being controlled to be true, and if so, the code continues running 
+
+
+    const handleKeyUp = (e) => {
+      console.log(e.keyCode);
+
+      if (gameOver && validRestartKeyCodes.includes(e.keyCode)) {
+        setgameOver(false);
+        setCurrentScore(0);
+        //Do more stuff to restart the game
+        // COMMENT - Do something to this?
+      }
+
+      if (validUpKeyCodes.includes(e.keyCode)) {
+        setUpIsPressed(false);
+      }
+      if (validDownKeyCodes.includes(e.keyCode)) {
+        setDownIsPressed(false);
+      }
+      if (e.keyCode === 32) {
+        setSpaceIsPressed(false);
+      } // What does 32 mean?
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
+    };
+  });
 
   // GENERAL SUGGESTION FOR RESTRUCTURING:
   // TRY TO SEPERATE THE USEEFFECTS INTO SEPERATE COMPONENTS
@@ -211,8 +284,6 @@ function App() {
   //    + asteroidTimer
   // - 
   // }
-
-
 
     useEffect(() => {
       setLoggedInUser(getUserName);
@@ -242,7 +313,7 @@ function App() {
         <div style={backgroundContainerStyle} className="background__container">
 
         </div>
-        <SettingsContext.Provider value={{
+        {/* <SettingsContext.Provider value={{
           bgScrollSpeed: bgScrollSpeed,
           gameAreaSize: gameAreaSize,
           asteroidSpawnTimer: asteroidSpawnTimer,
@@ -256,8 +327,8 @@ function App() {
           playerSpeed: playerSpeed, 
           playerSize: playerSize, 
           playerOffset: playerOffset
-          }}>
-          <BackgroundMovement></BackgroundMovement>
+          }}> */}
+          
           <GameStateContext.Provider value={{
             loggedInUser: loggedInUser,
             userLogin: userLogin,
@@ -265,8 +336,9 @@ function App() {
             gameStarted: gameStarted,
             gameOver: gameOver,
             currentScore: currentScore,
-            windowSize: windowSize,
+            gameAreaSize: gameAreaSize,
           }}>
+            <BackgroundMovement></BackgroundMovement>
             <InputContext.Provider value={{
               validUpKeyCodes: validUpKeyCodes,
               validDownKeyCodes: validDownKeyCodes, 
@@ -277,14 +349,16 @@ function App() {
             }}>
               <GameObjectsContext.Provider value={{
                 playerPos: playerPos,
+                setPlayerPos: setPlayerPos,
                 currentAsteroids: currentAsteroids,
+                setCurrentAsteroids,
                 currentShots: currentShots,
               }}>
-
+                  <AsteroidManager />
+                  <PlayerMovement />
                 </GameObjectsContext.Provider>
               </InputContext.Provider>
           </GameStateContext.Provider>
-        </SettingsContext.Provider>
 
 
 

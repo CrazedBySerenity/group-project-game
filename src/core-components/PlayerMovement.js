@@ -5,49 +5,55 @@ import {useState, useEffect, useContext} from 'react';
 // https://www.npmjs.com/package/d3-timer
 //
 import { now as d3Now, interval as d3Interval } from "d3-timer";
+import { GameObjectsContext, GameStateContext, InputContext } from '../helpers/context';
+import Settings from '../helpers/Settings';
 
 const PlayerMovement = () => {
 
+    const gameObjects = useContext(GameObjectsContext);
+    const input = useContext(InputContext);
+    const gameState = useContext(GameStateContext);
+    const gameAreaSize = gameState.gameAreaSize;
+    const settings = Settings();
+
     //MOVING PLAYER
     useEffect(() => {
-        if (gameOver) return;
-        if (!gameStarted) return;
+        if (gameState.gameOver) return;
+        if (!gameState.gameStarted) return;
         let interval;
         interval = d3Interval(() => {
-          if (!(playerPos < 0)) {
-            if (!downIsPressed && upIsPressed) {
-              setplayerPos((playerPos) => playerPos - playerSpeed);
+          if (!(gameObjects.playerPos < 0)) {
+            if (!input.downIsPressed && input.upIsPressed) {
+              gameObjects.setPlayerPos((playerPos) => playerPos - settings.playerSpeed);
             }
           }
     
-          if (!(playerPos > gameAreaSize.height - playerSize)) {
-            if (downIsPressed && !upIsPressed) {
-              setplayerPos((playerPos) => playerPos + playerSpeed);
+          if (!(gameObjects.playerPos > gameAreaSize.height - settings.playerSize)) {
+            if (input.downIsPressed && !input.upIsPressed) {
+              gameObjects.setPlayerPos((playerPos) => playerPos + settings.playerSpeed);
             }
           }
-    
-          playerShoot();
         }, 20);
     
         return () => {
           interval.stop();
         };
       }, [
-        downIsPressed,
-        upIsPressed,
-        playerPos,
-        playerSpeed,
-        spaceIsPressed,
-        currentShots,
+        input.downIsPressed,
+        input.upIsPressed,
+        gameObjects.playerPos,
+        settings.playerSpeed,
+        input.spaceIsPressed,
       ]);
 
     // SEPARATE USE EFFECT FOR TOP AND BOTTOM COLLISION DETECTION
-
     useEffect(() => {
-        if (playerPos < 0) setplayerPos(0);
-        else if (playerPos > gameAreaSize.height - playerSize)
-          setplayerPos(gameAreaSize.height - playerSize);
-      }, [playerPos]);
+        if (gameObjects.playerPos < 0) gameObjects.setPlayerPos(0);
+        else if (gameObjects.playerPos > gameAreaSize.height - settings.playerSize)
+          gameObjects.setPlayerPos(gameAreaSize.height - settings.playerSize);
+      }, [gameObjects.playerPos]);
     
 
 }
+
+export default PlayerMovement;
