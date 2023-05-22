@@ -522,6 +522,16 @@ function App() {
     //
     // Need help with this one
 
+    /*
+    Startar en interval som kör var 10nde ms. ->
+    Inuti intervallen:
+    De första 2 raderna sätter tilsens nya position till deras tidigare position minus hastigheten som vi bestämt för dem.
+    De två olika tilesen har olika startpositioner så det överlappar inte
+
+    De två if satserna kallas bara när positionen på tilsen är längre åt vänster än vad det finns width åt höger och sätter då tillbaka deras position så de är längst åt höger igen 
+    
+    */
+
     return () => {
       interval.stop();
     };
