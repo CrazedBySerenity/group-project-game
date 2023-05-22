@@ -139,6 +139,9 @@ function App() {
   const validRestartKeyCodes = [13, 82];
   // MORE INFO ON KEYCODES: https://www.toptal.com/developers/keycode/table
 
+  const validShootKeyCodes = [32, 39]
+  // 32 =
+
   // THE SIZE OF THE PLAYER, IN PIXELS (LATER SQUARED) [NUMBER]
   const playerSize = 64;
   // THE DISTANCE THE PLAYER IS PLACED FROM THE LEFT SIDE OF THE SCREEN, IN PIXELS [NUMBER]
@@ -359,7 +362,7 @@ function App() {
     setplayerPos(250);
     setgameOver(true);
     setGameStarted(false);
-    
+
     // SUGGESTION: Remove gameStarted being set to false and instead pass the gameOver variable to the Overlay component 
     // so that it can check if gameOver is true. All other places where gameStarted is used already has this kind of check
   }
@@ -381,9 +384,9 @@ function App() {
           setAsteroidSpeed(gameAreaSize.width * 0.005);
           setGameStarted(true);
         }
-      }
-      if (e.keyCode === 32) {
-        setSpaceIsPressed(true);
+        if (validShootKeyCodes.includes(e.keyCode)) {
+          setSpaceIsPressed(true);
+        }
       }
     };
 
@@ -412,7 +415,8 @@ function App() {
       }
       if (e.keyCode === 32) {
         setSpaceIsPressed(false);
-      } // What does 32 mean?
+      }
+
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -491,7 +495,7 @@ function App() {
     spaceIsPressed,
     currentShots,
   ]);
-  
+
   // SEPARATE USE EFFECT FOR TOP AND BOTTOM COLLISION DETECTION
   useEffect(() => {
     if (playerPos < 0) setplayerPos(0);
