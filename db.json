@@ -2,11 +2,6 @@
   "topPlayers": [
     {
       "name": "Player",
-      "score": 3300,
-      "id": 13
-    },
-    {
-      "name": "Player",
       "score": 3450,
       "id": 14
     },
@@ -24,6 +19,11 @@
       "name": "STORAPA",
       "score": 5400,
       "id": 33
+    },
+    {
+      "name": "oliver1",
+      "score": 6000,
+      "id": 34
     }
   ],
   "profiles": [
