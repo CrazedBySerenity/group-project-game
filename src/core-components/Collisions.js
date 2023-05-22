@@ -5,9 +5,15 @@ import {useState, useEffect, useContext} from 'react';
 // https://www.npmjs.com/package/d3-timer
 //
 import { now as d3Now, interval as d3Interval } from "d3-timer";
+import Settings from '../helpers/Settings';
+import { GameObjectsContext, GameStateContext } from '../helpers/context';
 
 const Collisions = () => {
-// removeAsteroid - Filters the currentAsteroids array and returns all items except the one with the given id
+
+  const settings = Settings();
+  const gameObjects = useContext(GameObjectsContext);
+  const gameState = useContext(GameStateContext);
+  // removeAsteroid - Filters the currentAsteroids array and returns all items except the one with the given id
   // parameters: id (string created from uuidv4)
   //
   // Basic flow:
@@ -15,45 +21,45 @@ const Collisions = () => {
   // --> Assign this new array as the currentAsteroids array
   //
   function removeAsteroid(id) {
-    setCurrentAsteroids(
-      currentAsteroids.filter((asteroid) => asteroid.id !== id)
+    gameObjects.setCurrentAsteroids(
+      gameObjects.currentAsteroids.filter((asteroid) => asteroid.id !== id)
     );
 
-    setCurrentScore((currentScore) => currentScore + baseAsteroidScore);
+    gameState.setCurrentScore((currentScore) => currentScore + settings.baseAsteroidScore);
   }
 
   // removeShot - Same as the removeAsteroid function but with shots
   //
   function removeShot(id) {
-    setCurrentShots(currentShots.filter((shot) => shot.id !== id));
+    gameObjects.setCurrentShots(gameObjects.currentShots.filter((shot) => shot.id !== id));
   }
 
   useEffect(() => {
     let interval;
     interval = d3Interval(() => {
-      if (gameOver) return;
-      if (!gameStarted) return;
+      if (gameState.gameOver) return;
+      if (!gameState.gameStarted) return;
       // The useEffect function creates a interval function and manages
       // the logic of the game and updates after how the game is run.
       //
 
       // COLLISION
-      if (currentAsteroids.length >= 1) {
-        currentAsteroids.map((asteroid) => {
-          asteroid.pos -= asteroidSpeed;
+      if (gameObjects.currentAsteroids.length >= 1) {
+        gameObjects.currentAsteroids.map((asteroid) => {
+          asteroid.pos -= settings.asteroidSpeed;
 
           if (asteroid.pos < -200) {
-            LoseGame();
+            gameState.LoseGame();
             //removeAsteroid(asteroid.id);
           }
 
           if (
-            asteroid.pos < playerOffset + playerSize &&
-            asteroid.pos + asteroidSize > playerOffset &&
-            asteroid.top - asteroidSize < playerPos &&
-            asteroid.top > playerPos + playerSize
+            asteroid.pos < settings.playerOffset + settings.playerSize &&
+            asteroid.pos + settings.asteroidSize > settings.playerOffset &&
+            asteroid.top - settings.asteroidSize < gameObjects.playerPos &&
+            asteroid.top > gameObjects.playerPos + settings.playerSize
           ) {
-            LoseGame();
+            gameState.LoseGame();
           }
 
           // PLAYER MOVEMENT AND ASTEROIDS
@@ -68,19 +74,19 @@ const Collisions = () => {
 
           // check this one
 
-          if (currentShots.length >= 1) {
-            currentShots.map((shot) => {
-              shot.pos += shotSpeed;
+          if (gameObjects.currentShots.length >= 1) {
+            gameObjects.currentShots.map((shot) => {
+              shot.pos += settings.shotSpeed;
 
-              if (shot.pos > gameAreaSize.width) {
+              if (shot.pos > gameState.gameAreaSize.width) {
                 removeShot(shot.id);
               }
 
               if (
                 asteroid.pos < shot.pos + shot.width &&
-                asteroid.pos + asteroidSize > shot.pos &&
+                asteroid.pos + settings.asteroidSize > shot.pos &&
                 asteroid.top <= shot.top + shot.height * 2 &&
-                asteroid.top + asteroidSize > shot.top - shot.height
+                asteroid.top + settings.asteroidSize > shot.top - shot.height
               ) {
                 console.log("Hit asteroid");
                 removeAsteroid(asteroid.id);
@@ -101,11 +107,11 @@ const Collisions = () => {
 
           return asteroid;
         });
-      } else if (currentShots.length >= 1) {
-        currentShots.map((shot) => {
-          shot.pos += shotSpeed;
+      } else if (gameObjects.currentShots.length >= 1) {
+        gameObjects.currentShots.map((shot) => {
+          shot.pos += settings.shotSpeed;
 
-          if (shot.pos > gameAreaSize.width) {
+          if (shot.pos > gameState.gameAreaSize.width) {
             removeShot(shot.id);
           }
 
@@ -117,7 +123,7 @@ const Collisions = () => {
     return () => {
       interval.stop();
     };
-  }, [playerPos, currentAsteroids, currentShots]);
+  });
 }
 
 export default Collisions;

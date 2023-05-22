@@ -10,6 +10,8 @@ import { authenticate } from "./helpers/Authenticate";
 
 import { GameObjectsContext, GameStateContext, InputContext } from "./helpers/context";
 
+import {now as d3Now} from 'd3-timer';
+
 // Custom Hooks
 // useWindowDimensions - Simple hook that returns an object with a width and height property corresponding to the window size in pixels
 // return: {width: Current screen width, height: Current screen height}
@@ -38,6 +40,7 @@ import BackgroundMovement from './core-components/BackgroundMovement';
 import AsteroidManager from "./core-components/AsteroidManager";
 import PlayerMovement from "./core-components/PlayerMovement";
 import Shooting from "./core-components/Shooting";
+import Collisions from "./core-components/Collisions";
 
 import Settings from "./helpers/Settings";
 
@@ -310,22 +313,6 @@ function App() {
         <div style={backgroundContainerStyle} className="background__container">
 
         </div>
-        {/* <SettingsContext.Provider value={{
-          bgScrollSpeed: bgScrollSpeed,
-          gameAreaSize: gameAreaSize,
-          asteroidSpawnTimer: asteroidSpawnTimer,
-          asteroidSize: asteroidSize,
-          baseAsteroidScore: baseAsteroidScore,
-          maxAsteroids: maxAsteroids, 
-          asteroidSpawnTimer: asteroidSpawnTimer, 
-          shotSpawnTimer: shotSpawnTimer, 
-          maxShots: maxShots, 
-          shotSpeed: shotSpeed, 
-          playerSpeed: playerSpeed, 
-          playerSize: playerSize, 
-          playerOffset: playerOffset
-          }}> */}
-          
           <GameStateContext.Provider value={{
             loggedInUser: loggedInUser,
             userLogin: userLogin,
@@ -333,7 +320,9 @@ function App() {
             gameStarted: gameStarted,
             gameOver: gameOver,
             currentScore: currentScore,
+            setCurrentScore,
             gameAreaSize: gameAreaSize,
+            LoseGame,
           }}>
             <BackgroundMovement></BackgroundMovement>
             <InputContext.Provider value={{
@@ -355,6 +344,7 @@ function App() {
                   <AsteroidManager />
                   <PlayerMovement />
                   <Shooting />
+                  <Collisions />
                 </GameObjectsContext.Provider>
               </InputContext.Provider>
           </GameStateContext.Provider>

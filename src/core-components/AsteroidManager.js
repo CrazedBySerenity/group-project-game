@@ -29,7 +29,8 @@ const AsteroidManager = () => {
   const gameAreaSize = gameState.gameAreaSize;
   const settings = Settings();
 
-  const asteroidSize = Settings.asteroidSize;
+  const asteroidSize = settings.asteroidSize;
+
   // The properties settings.asteroidSpawnTimer.min and .max can only be accessed by using settings.min and .max, not sure why
   const asteroidSpawnTimer = {min: settings.asteroidSpawnTimer.min, max: settings.asteroidSpawnTimer.max};
   const maxAsteroids = settings.maxAsteroids;
@@ -86,7 +87,7 @@ const AsteroidManager = () => {
     interval = d3Interval(() => {
       let now = d3Now();
       //Check timer and set timer
-      if (asteroidTimer < now) {
+      if (asteroidTimer < now && !gameState.gameOver && gameState.gameStarted) {
         console.log('Asteroid spawned');
         let newTimer =
           now +
