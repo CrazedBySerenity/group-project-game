@@ -52,7 +52,6 @@ const AsteroidManager = () => {
   //
   function addAsteroid() {
     let now = d3Now();
-    console.log(asteroidTimer)
     //Check timer and set timer
     if (asteroidTimer < now) {
       console.log('hey');
@@ -86,9 +85,9 @@ const AsteroidManager = () => {
     let interval;
     interval = d3Interval(() => {
       let now = d3Now();
-      console.log(asteroidTimer);
       //Check timer and set timer
       if (asteroidTimer < now) {
+        console.log('Asteroid spawned');
         let newTimer =
           now +
           (Math.random(asteroidSpawnTimer.max - asteroidSpawnTimer.min) +

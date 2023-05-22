@@ -37,6 +37,8 @@ import Leaderboard from "./components/Leaderboard";
 import BackgroundMovement from './core-components/BackgroundMovement';
 import AsteroidManager from "./core-components/AsteroidManager";
 import PlayerMovement from "./core-components/PlayerMovement";
+import Shooting from "./core-components/Shooting";
+
 import Settings from "./helpers/Settings";
 
 
@@ -67,11 +69,6 @@ function App() {
   //
   // STRUCTURE EXAMPLE: [{pos, top, id, width, height}, {pos, top, id, width, height}, {pos, top, id, width, height}]
   const [currentShots, setCurrentShots] = useState([]);
-
-  // THE TIME WHEN THE NEXT SHOT SHOULD BE SPAWNED IN, REPRESENTED BY A NUMBER IN MILLISECONDS SLIGHTLY LARGER THAN DATE.NOW [NUMBER]
-  // REPLACES THE OLD SHOTCOOLDOWN
-  // SUGGESTION: ELABORATE ON THIS EXPLANATION
-  const [shotTimer, setShotTimer] = useState(0);
 
   // A BOOLEAN OF WHETHER DOWN IS CURRENTLY BEING PRESSED OR NOT [BOOLEAN]
   const [downIsPressed, setDownIsPressed] = useState(false);
@@ -353,9 +350,11 @@ function App() {
                 currentAsteroids: currentAsteroids,
                 setCurrentAsteroids,
                 currentShots: currentShots,
+                setCurrentShots,
               }}>
                   <AsteroidManager />
                   <PlayerMovement />
+                  <Shooting />
                 </GameObjectsContext.Provider>
               </InputContext.Provider>
           </GameStateContext.Provider>

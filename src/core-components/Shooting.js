@@ -1,4 +1,7 @@
 import {useState, useEffect, useContext} from 'react';
+import { GameObjectsContext, InputContext } from '../helpers/context';
+import Settings from '../helpers/Settings';
+import Shot from '../components/Shot';
 
 // D3 is used as an alternative to the setinterval and date.now functions to slightly improve performance
 // More info:
@@ -15,7 +18,15 @@ import { v4 as uuidv4 } from "uuid";
 
 const Shooting = () => {
 
-    const spaceIsPressed = useContext(InputContext.spaceIsPressed);
+  // THE TIME WHEN THE NEXT SHOT SHOULD BE SPAWNED IN, REPRESENTED BY A NUMBER IN MILLISECONDS SLIGHTLY LARGER THAN DATE.NOW [NUMBER]
+  // REPLACES THE OLD SHOTCOOLDOWN
+  // SUGGESTION: ELABORATE ON THIS EXPLANATION
+  const [shotTimer, setShotTimer] = useState(0);
+
+  const input = useContext(InputContext);
+  const gameObjects = useContext(GameObjectsContext);
+  const settings = Settings();
+
   // playerShoot - Adds a new item to the currentShots array with the values needed for a new shot to be rendered
   //
   // Basic flow:
@@ -32,18 +43,26 @@ const Shooting = () => {
   function playerShoot() {
     let now = d3Now();
 
-    if (spaceIsPressed && currentShots.length < maxShots && shotTimer < now) {
-      let newTimer = now + shotSpawnTimer * 1000;
+    if (input.spaceIsPressed && gameObjects.currentShots.length < settings.maxShots && shotTimer < now) {
+      let newTimer = now + settings.shotSpawnTimer * 1000;
       setShotTimer(newTimer);
 
-      let newShotTop = playerPos + playerSize * 0.5 - 5;
+      let newShotTop = gameObjects.playerPos + settings.playerSize * 0.5 - 5;
       console.log("shot fired");
-      setCurrentShots([
-        ...currentShots,
-        { pos: 70, top: newShotTop, id: uuidv4(), width: 40, height: 10 }, //SUGGESTION: Replace pos with playerOffset + playerSize
+      gameObjects.setCurrentShots([
+        ...gameObjects.currentShots,
+        { pos: settings.playerOffset + settings.playerSize, top: newShotTop, id: uuidv4(), width: settings.shotWidth, height: settings.shotHeight },
       ]);
     }
   }
+
+  useEffect(() =>  {
+    let interval = d3Interval((playerShoot), 30);
+
+    return () => {
+      interval.stop();
+    }
+  })
 
     // ShotRenderer - Copy of the AsteroidRenderer function except for shots
     const ShotRenderer = () => {
@@ -52,7 +71,7 @@ const Shooting = () => {
     
       // renderShots - Copy of the renderAsteroids function except for shots
       function renderShots() {
-        let visibleShots = currentShots.map((shot) => (
+        let visibleShots = gameObjects.currentShots.map((shot) => (
           <Shot
             key={shot.id}
             pos={shot.pos}
@@ -67,3 +86,5 @@ const Shooting = () => {
         <ShotRenderer />
       )
 }
+
+export default Shooting;

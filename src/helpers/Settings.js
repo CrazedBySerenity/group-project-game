@@ -33,6 +33,9 @@ const Settings = () => {
     // HOW FAR THE SHOT SHOULD TRAVEL EACH INTERVAL CALL, IN PIXELS [NUMBER]
     const shotSpeed = 50;
 
+    const shotWidth = 40;
+    const shotHeight = 10;
+
     return({
       bgScrollSpeed: bgScrollSpeed,
       asteroidSpawnTimer: asteroidSpawnTimer,
@@ -42,6 +45,8 @@ const Settings = () => {
       shotSpawnTimer: shotSpawnTimer, 
       maxShots: maxShots, 
       shotSpeed: shotSpeed, 
+      shotWidth: shotWidth,
+      shotHeight: shotHeight,
       playerSpeed: playerSpeed, 
       playerSize: playerSize, 
       playerOffset: playerOffset,
