@@ -544,18 +544,26 @@ function App() {
     interval = d3Interval(() => {
       if (gameOver) return;
       if (!gameStarted) return;
-      let now = d3Now();
-
-      // SUGGESTION: REMOVE THESE 3 LINES REGARDING DELTATIME AND THE lastCall VARIABLE COMPLETELY
-      let deltaTime = (now - lastCall.current) / 1000;
-      lastCall.current = now;
-      if (deltaTime > 200) deltaTime = 0.01;
 
       // The useEffect function creates a interval function and manages
       // the logic of the game and updates after how the game is run.
       //
 
       // Needs to be updated
+
+      /*
+      Sätter den inloggade usern som den nuvarande inloggade usern hela tiden, detta är min dåliga kod för om jag inte uppdaterade den hela tiden så kunde det hända att första scoren man satt som inloggad user inte registrerades med ditt namn utan default
+      Startar en interval. 
+      Om gameOver är sant så kör intervallen inte längre och stoppas. 
+      Samma om gameStarted inte är true
+      Om game är started och det inte är gameover ->
+      kör addAsteroid funktionnen,
+      om det finns mer än 1 asteroid, mappa igenom alla asteroider och ändra deras position med asteroidSpeed. Om en asteroid kommer för långt åt vänster dvs -200 förlora spelet.
+
+      Nästa if om någon asteroids pos och top plus pos och top + asteroid size är innanför playerOffset och player top och playerOffset och playertop + playerSize förlora spelet. 
+      Denna if satsen är lite komplicerad i text men tänkt dig att vi skapar 2 lådor en som är runt spelaren och en som är runt asteroiden, om de rör varandra på något sätt så förlorar du.
+      
+      */
 
       addAsteroid();
       // New asteroid function
