@@ -33,9 +33,9 @@ import { authenticate } from "./helpers";
 // Leaderboard - Component that displays and updates a leaderboard containing the top 5 highest scores available in db.json
 // props:  gameSize, currentScore, gameOver
 //
-import Asteroid from "./Asteroid";
-import Shot from "./Shot";
-import Overlay from "./Overlay";
+import Asteroid from "./components/Asteroid";
+import Shot from "./components/Shot";
+import Overlay from "./components/Overlay";
 import BottomBar from "./components/BottomBar";
 import Leaderboard from "./components/Leaderboard";
 
@@ -43,7 +43,7 @@ import Leaderboard from "./components/Leaderboard";
 // useWindowDimensions - Simple hook that returns an object with a width and height property corresponding to the window size in pixels
 // return: {width: Current screen width, height: Current screen height}
 //
-import useWindowDimensions from "./UseWindowDimensions";
+import useWindowDimensions from "./components/UseWindowDimensions";
 
 function App() {
   // OBJECT CONTAINING CURRENT SIZE OF THE WINDOW [OBJECT]

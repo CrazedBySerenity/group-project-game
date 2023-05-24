@@ -1,4 +1,3 @@
-
 // Custom Components
 // Register - Component that contains logic and a simple UI for registering a new user
 // Login - Component that contains logic and a simple UI for Logging in
@@ -7,15 +6,13 @@ import Register from "./Register";
 import Login from "./Login";
 
 const Overlay = (props) => {
-
-
   // Basic Flow:
   // --> Display the registration UI if the player wants to register
   // --> Display the login UI if the player wants to log in
   // --> Display the UI for restarting the game if the player has lost
   // --> Display the UI for starting the game if the player has not yet done so
   // --> If none of the above apply then return nothing (Hide the overlay)
-  // 
+  //
   if (props.userRegister) {
     return <Register></Register>;
   } else if (props.userLogin) {
